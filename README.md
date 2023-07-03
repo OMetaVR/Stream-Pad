@@ -4,7 +4,7 @@
     <img src="https://cdn.discordapp.com/avatars/297075664530440192/f591756d394a3d9599d1482f731f4d4a.webp?size=1024&width=0&height=384" alt="Logo" width="80" height="80">
   </a>
 
-  <h3 align="center">Macro numpad Base</h3>
+  <h3 align="center">Stream Pad</h3>
 
   <p align="center">
     Useful little tool I worked on over night
