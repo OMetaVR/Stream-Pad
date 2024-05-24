@@ -4,74 +4,82 @@ SendMode Input
 SetWorkingDir %A_ScriptDir%
 
 profile := 1
-
 profiles := {}
 profiles[1] := "Audio"
 profiles[2] := "Tasks"
 profiles[3] := "Websites"
+profiles[4] := "Hotswap"
 
 ShowTooltip(profiles[profile] . "")
 
 ~ScrollLock::
-SetNumLockState, AlwaysOn
+    SetNumLockState, AlwaysOn
 return
 
 #If (!GetKeyState("ScrollLock", "T"))
-
 Numpad1::
-Send, {Numpad1}
+    Send, {Numpad1}
 return
 
 Numpad2::
-Send, {Numpad2}
+    Send, {Numpad2}
 return
 
 Numpad3::
-Send, {Numpad3}
+    Send, {Numpad3}
 return
 
 Numpad4::
-Send, {Numpad4}
+    Send, {Numpad4}
 return
 
 Numpad5::
-Send, {Numpad5}
+    Send, {Numpad5}c
 return
 
 Numpad6::
-Send, {Numpad6}
+    Send, {Numpad6}
 return
 
 Numpad7::
-Send, {Numpad7}
+    Send, {Numpad7}
 return
 
 Numpad8::
-Send, {Numpad8}
+    Send, {Numpad8}
 return
 
 Numpad9::
-Send, {Numpad9}
+    Send, {Numpad9}
 return
 
 Numpad0::
-Send, {Numpad0}
+    Send, {Numpad0}
+return
+
+NumpadAdd::
+    Send, {NumpadAdd}
+return
+
+NumpadSub::
+    Send, {NumpadSub}
 return
 
 #If
 
+#If (GetKeyState("ScrollLock", "T"))
 NumpadAdd::
-profile++
-if (profile > 3)
-    profile := 1
-ShowTooltip(profiles[profile] . "")
+    profile++
+    if (profile > 4)
+        profile := 1
+    ShowTooltip(profiles[profile] . "")
 return
 
 NumpadSub::
-profile--
-if (profile < 1)
-    profile := 3
-ShowTooltip(profiles[profile] . "")
+    profile--
+    if (profile < 1)
+        profile := 4
+    ShowTooltip(profiles[profile] . "")
 return
 
 #If (profile = 1)
@@ -167,7 +175,7 @@ Run, https://www.google.com
 return
 
 Numpad3::
-Run, https://www.9anime.pl
+Run, aniwave.to/home
 return
 
 Numpad4::
@@ -192,6 +200,34 @@ return
 
 Numpad0::
 Run, https://chat.openai.com/
+return
+
+#If
+
+#If (profile = 4) 
+
+Numpad4::
+WinGetActiveStats, Title, Width, Height, X, Y
+NewX := X - A_ScreenWidth
+WinMove, %Title%,, %NewX%, %Y%
+return
+
+Numpad6::
+WinGetActiveStats, Title, Width, Height, X, Y
+NewX := X + A_ScreenWidth
+WinMove, %Title%,, %NewX%, %Y%
+return
+
+Numpad8::
+WinGetActiveStats, Title, Width, Height, X, Y
+NewY := Y - A_ScreenHeight
+WinMove, %Title%,, %X%, %NewY%
+return
+
+Numpad2::
+WinGetActiveStats, Title, Width, Height, X, Y
+NewY := Y + A_ScreenHeight
+WinMove, %Title%,, %X%, %NewY%
 return
 
 #If
