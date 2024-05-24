@@ -1,17 +1,7 @@
-<br/>
-<p align="center">
-  <a href="https://github.com/OMetaVR/Macro-NUM-pad">
-    <img src="https://cdn.discordapp.com/avatars/297075664530440192/f591756d394a3d9599d1482f731f4d4a.webp?size=1024&width=0&height=384" alt="Logo" width="80" height="80">
-  </a>
-
   <h3 align="center">Stream Pad</h3>
 
   <p align="center">
     Useful little tool I worked on over night
-    <br/>
-    <br/>
-    <a href="https://github.com/OMetaVR/Macro-NUM-pad"><strong>Explore the docs »</strong></a>
-    <br/>
     <br/>
     <a href="https://github.com/OMetaVR/Macro-NUM-pad/issues">Report Bug</a>
     .
@@ -19,71 +9,99 @@
   </p>
 </p>
 
-![Downloads](https://img.shields.io/github/downloads/OMetaVR/Macro-NUM-pad/total) ![Contributors](https://img.shields.io/github/contributors/OMetaVR/Macro-NUM-pad?color=dark-green) ![Stargazers](https://img.shields.io/github/stars/OMetaVR/Macro-NUM-pad?style=social) ![Issues](https://img.shields.io/github/issues/OMetaVR/Macro-NUM-pad) ![License](https://img.shields.io/github/license/OMetaVR/Macro-NUM-pad) 
+<p align="center">
+  <a href="https://github.com/OMetaVR/Macro-NUM-pad/releases">
+    <img src="https://img.shields.io/github/downloads/OMetaVR/Macro-NUM-pad/total" alt="Downloads">
+  </a>
+  <a href="https://github.com/OMetaVR/Macro-NUM-pad/graphs/contributors">
+    <img src="https://img.shields.io/github/contributors/OMetaVR/Macro-NUM-pad?color=dark-green" alt="Contributors">
+  </a>
+  <a href="https://github.com/OMetaVR/Macro-NUM-pad/stargazers">
+    <img src="https://img.shields.io/github/stars/OMetaVR/Macro-NUM-pad?style=social" alt="Stargazers">
+  </a>
+  <a href="https://github.com/OMetaVR/Macro-NUM-pad/issues">
+    <img src="https://img.shields.io/github/issues/OMetaVR/Macro-NUM-pad" alt="Issues">
+  </a>
+  <a href="https://github.com/OMetaVR/Macro-NUM-pad/blob/main/LICENSE">
+    <img src="https://img.shields.io/github/license/OMetaVR/Macro-NUM-pad" alt="License">
+  </a>
+</p>
 
-## Table Of Contents
+# AutoHotkey Numpad Profile Switcher
 
-* [About the Project](#about-the-project)
-* [Built With](#built-with)
-* [Getting Started](#getting-started)
-  * [Prerequisites](#prerequisites)
-  * [Installation](#installation)
-* [Roadmap](#roadmap)
-* [Contributing](#contributing)
-* [Authors](#authors)
-* [Acknowledgements](#acknowledgements)
+This AutoHotkey script allows you to switch between different profiles using the numpad keys. Each profile has its own set of functionalities assigned to the numpad keys, enabling you to quickly access and control various tasks, applications, and websites.
 
-## About The Project
+## Features
 
-![Screen Shot](https://media.discordapp.net/attachments/522939786395254785/1125529481969401886/image.png?width=327&height=169)
+- Switch between four different profiles:
+  - Audio: Control media playback and volume
+  - Tasks: Activate or launch specific applications
+  - Websites: Open predefined websites
+  - Hotswap: Move the active window between monitors
 
-Macro Num Pad is a very basic but versatile little template I created for turning your more than likely untouched numpad into a macro pad hence the name obviously.
+- Easily switch profiles using the NumpadAdd (+) and NumpadSub (-) keys when ScrollLock is on
+- When ScrollLock is off, the numpad keys function as normal numpad keys
 
-It's very easy to use and quick to set up, I'll be adding examples as well for those with less coding knowledge and those who need help!
+## Prerequisites
 
-## Built With
+- AutoHotkey installed on your system
 
-This was all made with AHK and only AHK, I will not be giving any EXE files so as I know some are very untrusting
+## Usage
 
-## Getting Started
+1. Download or clone this repository to your local machine
+2. Double-click the script file to run it
+3. Press ScrollLock to enable the profile switching functionality
+4. Use NumpadAdd (+) and NumpadSub (-) to switch between profiles
+5. Press the numpad keys to perform the actions assigned to each profile
+6. Press ScrollLock again to disable the profile switching and use the numpad keys normally
 
-Starting off you wont need install near anything. 
+## Profiles
 
-In the future if you want to set up graphics to display certain things when changing profiles or when certain actions are done using this, a program like rainmeter would be a good idea as well!
+### Audio
 
-### Prerequisites
+- Numpad5: Play/Pause media
+- Numpad4: Previous track
+- Numpad6: Next track
+- Numpad8: Volume up
+- Numpad2: Volume down
+- Numpad0: Mute volume
 
-Auto Hot Key v2 -
-**(optional for experienced users)** Rainmeter
+### Tasks
 
-### Installation
+- Numpad1: Activate or launch Discord
+- Numpad2: Activate or launch Opera GX browser
+- Numpad3: Activate or launch Steam
+- Numpad4: Activate or launch Spotify
+- Numpad5: Activate or launch Task Manager
+- Numpad6: Activate or launch File Explorer
+- Numpad7: Activate or launch Voicemeeter
 
-[Auto Hot Key Download](https://www.autohotkey.com/download/ahk-v2.exe)
-[Rainmeter Download](https://github.com/rainmeter/rainmeter/releases/download/v4.5.17.3700/Rainmeter-4.5.17.exe)
+### Websites
 
-## Roadmap
+- Numpad1: Open YouTube
+- Numpad2: Open Google
+- Numpad3: Open 9anime
+- Numpad4: Open tv88
+- Numpad5: Open Discord
+- Numpad6: Open GitHub
+- Numpad7: Open Twitch
+- Numpad8: Open Kick
+- Numpad0: Open OpenAI Chat
 
-See the [open issues](https://github.com/OMetaVR/Macro-NUM-pad/issues) for a list of proposed features (and known issues).
+### Hotswap
 
-## Contributing
+- Numpad4: Move the active window to the left monitor
+- Numpad6: Move the active window to the right monitor
+- Numpad8: Move the active window to the top monitor
+- Numpad2: Move the active window to the bottom monitor
 
-Contributions are what make the open source community such an amazing place to be learn, inspire, and create. Any contributions you make are **greatly appreciated**.
-* If you have suggestions for adding or removing projects, feel free to [open an issue](https://github.com/OMetaVR/Macro-NUM-pad/issues/new) to discuss it, or directly create a pull request after you edit the *README.md* file with necessary changes.
-* Please make sure you check your spelling and grammar.
-* Create individual PR for each suggestion.
-* Please also read through the [Code Of Conduct](https://github.com/OMetaVR/Macro-NUM-pad/blob/main/CODE_OF_CONDUCT.md) before posting your first idea as well.
+## Customization
 
-### Creating A Pull Request
+You can easily customize the script by modifying the profiles and their assigned actions. Open the script file in a text editor and make changes according to your preferences.
 
-1. Fork the Project
-2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
-3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
-4. Push to the Branch (`git push origin feature/AmazingFeature`)
-5. Open a Pull Request
+## License
 
-## Authors
-
-* **OMeta** - *Idiot* - [OMeta](https://github.com/OMetaVR) - *Made the damn thing*
+This project is licensed under the [MIT License](LICENSE).
 
 ## Acknowledgements
 
