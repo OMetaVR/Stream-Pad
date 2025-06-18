@@ -263,7 +263,6 @@ This project is licensed under nothing, it's free to use and even claim as your 
 - **[Takkeshi](https://github.com/Takkeshi)** - Helped push me to create this project
 - **[PhoenixAceVFX](https://github.com/PhoenixAceVFX)** - Helped out with small issues
 - **AutoHotkey Community** - Inspiration and support
-- **All Contributors** - Thank you for making this project better!
 
 ---
 
