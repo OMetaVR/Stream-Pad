@@ -8,7 +8,6 @@
 [![Contributors](https://img.shields.io/github/contributors/OMetaVR/Macro-NUM-pad?style=for-the-badge&logo=github&color=green)](https://github.com/OMetaVR/Macro-NUM-pad/graphs/contributors)
 [![Stars](https://img.shields.io/github/stars/OMetaVR/Macro-NUM-pad?style=for-the-badge&logo=github&color=yellow)](https://github.com/OMetaVR/Macro-NUM-pad/stargazers)
 [![Issues](https://img.shields.io/github/issues/OMetaVR/Macro-NUM-pad?style=for-the-badge&logo=github&color=red)](https://github.com/OMetaVR/Macro-NUM-pad/issues)
-[![License](https://img.shields.io/github/license/OMetaVR/Macro-NUM-pad?style=for-the-badge&logo=github&color=purple)](https://github.com/OMetaVR/Macro-NUM-pad/blob/main/LICENSE)
 
 [🐛 Report Bug](https://github.com/OMetaVR/Macro-NUM-pad/issues) • [✨ Request Feature](https://github.com/OMetaVR/Macro-NUM-pad/issues) • [📖 Documentation](https://github.com/OMetaVR/Macro-NUM-pad/wiki)
 
