@@ -59,7 +59,7 @@ pub async fn import_image_url(url: String, kind: Option<AssetKind>) -> CmdResult
     blocking(move || {
         let agent: ureq::Agent = ureq::Agent::config_builder()
             .timeout_global(Some(std::time::Duration::from_secs(30)))
-            .user_agent("StreamPad/0.1 (+https://github.com/OMetaVR/Stream-Pad)")
+            .user_agent(concat!("StreamPad/", env!("CARGO_PKG_VERSION"), " (+https://github.com/OMetaVR/Stream-Pad)"))
             .build()
             .into();
         let mut response = agent.get(&url).call().map_err(|e| CmdError::new(format!("couldn't download the image: {e}")))?;

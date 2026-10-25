@@ -3334,7 +3334,7 @@ checksum = "ff7589a1859b09232522bb9edf076ca7fcf14ded96685d3fa629db73023ffbb7"
 
 [[package]]
 name = "streampad"
-version = "0.1.0"
+version = "2.0.0"
 dependencies = [
  "env_logger",
  "log",
@@ -3354,7 +3354,7 @@ dependencies = [
 
 [[package]]
 name = "streampad-core"
-version = "0.1.0"
+version = "2.0.0"
 dependencies = [
  "fastrand",
  "serde",

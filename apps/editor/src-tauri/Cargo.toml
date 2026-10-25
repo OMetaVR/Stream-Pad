@@ -1,6 +1,6 @@
 [package]
 name = "streampad"
-version = "0.1.0"
+version = "2.0.0"
 description = "StreamPad editor: profiles, keys and macros for the StreamPad numpad macropad"
 edition = "2024"
 license = "MIT"

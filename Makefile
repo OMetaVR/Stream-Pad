@@ -2,6 +2,7 @@
 #   make                 build daemon, overlay and editor (release)
 #   make install         install to ~/.local (PREFIX=/usr/local for a system install: sudo make install)
 #   make uninstall
+#   make release         prebuilt tarball + checksums in dist/ (Arch package: packaging/arch/PKGBUILD)
 #   make test            Rust unit tests (no devices touched)
 
 PREFIX     ?= $(HOME)/.local
@@ -11,7 +12,7 @@ JOBS       ?= $(shell nproc)
 
 export CARGO_TARGET_DIR := $(TARGET)
 
-.PHONY: all daemon overlay editor share install uninstall test clean
+.PHONY: all daemon overlay editor share install uninstall release test clean
 
 all: daemon overlay editor share
 
@@ -32,6 +33,9 @@ share:
 
 install:
 	PREFIX="$(PREFIX)" TARGET="$(TARGET)" BUILD="$(BUILD)" ./packaging/install.sh
+
+release: all
+	./packaging/make-release.sh
 
 uninstall:
 	PREFIX="$(PREFIX)" ./packaging/uninstall.sh

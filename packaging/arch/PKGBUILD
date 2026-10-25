@@ -1,0 +1,45 @@
+# Maintainer: OMetaVR <https://github.com/OMetaVR>
+pkgname=streampad
+pkgver=2.0.0
+pkgrel=1
+pkgdesc="Turn your numpad into a profile-based macropad with an on-screen pad (KDE Plasma / Wayland)"
+arch=('x86_64')
+url="https://github.com/OMetaVR/Stream-Pad"
+license=('MIT')
+depends=(
+  'gcc-libs' 'glibc' 'systemd'
+  # editor
+  'gtk3' 'webkit2gtk-4.1'
+  # on-screen pad
+  'qt6-base' 'qt6-declarative' 'qt6-svg' 'layer-shell-qt' 'kwindowsystem'
+)
+optdepends=(
+  'wl-clipboard: clipboard actions and typing non-US characters'
+  'xdg-utils: "Open a website" / "Open a file" actions'
+  'pipewire-audio: "Play a sound" action (pw-play)'
+)
+makedepends=('git' 'rust' 'bun' 'cmake' 'ninja')
+install=streampad.install
+# Build a local checkout instead with:  STREAMPAD_SRC="git+file:///path/to/Stream-Pad" makepkg
+source=("Stream-Pad::${STREAMPAD_SRC:-git+https://github.com/OMetaVR/Stream-Pad.git#tag=v$pkgver}")
+sha256sums=('SKIP')
+options=('!lto' '!debug')
+
+prepare() {
+  cd Stream-Pad
+  export CARGO_HOME="$srcdir/cargo-home"
+  cargo fetch --locked
+  (cd apps/editor/src-tauri && cargo fetch --locked)
+  (cd apps/editor && bun install --frozen-lockfile)
+}
+
+build() {
+  cd Stream-Pad
+  export CARGO_HOME="$srcdir/cargo-home"
+  make JOBS="$(nproc)" TARGET="$srcdir/target"
+}
+
+package() {
+  cd Stream-Pad
+  TARGET="$srcdir/target" packaging/stage.sh "$pkgdir" /usr
+}
