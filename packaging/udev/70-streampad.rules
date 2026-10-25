@@ -1,0 +1,6 @@
+# StreamPad: let the logged-in user read keyboards and create virtual input devices without being in the
+# "input" group. Only needed when /dev/uinput or /dev/input/event* aren't accessible to your user.
+# Install:  sudo install -m644 70-streampad.rules /etc/udev/rules.d/ && sudo udevadm control --reload && sudo udevadm trigger
+# (must sort before 73-seat-late.rules so the uaccess tag is applied)
+KERNEL=="uinput", SUBSYSTEM=="misc", TAG+="uaccess", OPTIONS+="static_node=uinput"
+SUBSYSTEM=="input", KERNEL=="event*", ENV{ID_INPUT_KEYBOARD}=="1", TAG+="uaccess"

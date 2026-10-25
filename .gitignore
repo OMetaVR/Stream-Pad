@@ -1,0 +1,9 @@
+/target/
+/build/
+**/node_modules/
+apps/editor/dist/
+apps/editor/src-tauri/target/
+apps/editor/src-tauri/gen/
+apps/overlay/build/
+*.swp
+.DS_Store

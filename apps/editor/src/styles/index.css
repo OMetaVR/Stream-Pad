@@ -1,0 +1,153 @@
+@import "tailwindcss";
+@import "./tokens.css";
+@import "./base.css";
+
+/*
+ * Tailwind v4 theme → design tokens. Default palettes / type / radii are cleared so only token-backed
+ * utilities exist (bg-panel, text-muted, border-line, rounded-md, text-sm …). `inline` keeps the var()
+ * references, so theme and accent changes apply live without rebuilding classes.
+ */
+@theme inline {
+  --color-*: initial;
+  --color-transparent: transparent;
+  --color-current: currentColor;
+  --color-white: #ffffff;
+  --color-black: #000000;
+
+  --color-bg: var(--sp-bg);
+  --color-panel: var(--sp-panel);
+  --color-raised: var(--sp-raised);
+  --color-control: var(--sp-control);
+  --color-control-hover: var(--sp-control-hover);
+  --color-control-active: var(--sp-control-active);
+
+  --color-line-subtle: var(--sp-line-subtle);
+  --color-line: var(--sp-line);
+  --color-line-strong: var(--sp-line-strong);
+
+  --color-fg: var(--sp-fg);
+  --color-muted: var(--sp-muted);
+  --color-faint: var(--sp-faint);
+
+  --color-accent: var(--sp-accent);
+  --color-accent-fg: var(--sp-accent-fg);
+  --color-accent-hover: var(--sp-accent-hover);
+  --color-accent-soft: var(--sp-accent-soft);
+  --color-accent-softer: var(--sp-accent-softer);
+  --color-accent-line: var(--sp-accent-line);
+  --color-accent-text: var(--sp-accent-text);
+
+  --color-danger: var(--sp-danger);
+  --color-danger-soft: var(--sp-danger-soft);
+  --color-success: var(--sp-success);
+  --color-success-soft: var(--sp-success-soft);
+  --color-warning: var(--sp-warning);
+  --color-warning-soft: var(--sp-warning-soft);
+
+  --color-keybed: var(--sp-keybed);
+  --color-keycap: var(--sp-keycap);
+  --color-keycap-skirt: var(--sp-keycap-skirt);
+  --color-keycap-highlight: var(--sp-keycap-highlight);
+
+  --font-sans: var(--sp-font-sans);
+  --font-mono: var(--sp-font-mono);
+
+  /* Type scale (px so it is independent of the root font size): size / line-height */
+  --text-*: initial;
+  --text-2xs: 10px;
+  --text-2xs--line-height: 14px;
+  --text-xs: 11px;
+  --text-xs--line-height: 16px;
+  --text-sm: 12px;
+  --text-sm--line-height: 16px;
+  --text-base: 13px;
+  --text-base--line-height: 20px;
+  --text-md: 14px;
+  --text-md--line-height: 20px;
+  --text-lg: 16px;
+  --text-lg--line-height: 24px;
+  --text-xl: 20px;
+  --text-xl--line-height: 28px;
+  --text-2xl: 24px;
+  --text-2xl--line-height: 32px;
+
+  --spacing: 4px;
+
+  --radius-*: initial;
+  --radius-sm: var(--sp-radius-sm);
+  --radius-md: var(--sp-radius-md);
+  --radius-lg: var(--sp-radius-lg);
+  --radius-xl: var(--sp-radius-xl);
+
+  --shadow-*: initial;
+  --shadow-raised: var(--sp-shadow-raised);
+  --shadow-popover: var(--sp-shadow-popover);
+  --shadow-dialog: var(--sp-shadow-dialog);
+
+  --ease-out: var(--sp-ease-out);
+  --ease-in: var(--sp-ease-in);
+  --ease-in-out: var(--sp-ease-in-out);
+
+  --animate-pop-in: sp-pop-in var(--sp-dur) var(--sp-ease-out);
+  --animate-pop-out: sp-pop-out var(--sp-dur-fast) var(--sp-ease-in) forwards;
+  --animate-fade-in: sp-fade-in var(--sp-dur) var(--sp-ease-out);
+  --animate-fade-out: sp-fade-out var(--sp-dur-fast) var(--sp-ease-in) forwards;
+  --animate-dialog-in: sp-dialog-in var(--sp-dur-slow) var(--sp-ease-out);
+  --animate-dialog-out: sp-dialog-out var(--sp-dur-fast) var(--sp-ease-in) forwards;
+  --animate-spin: spin 0.7s linear infinite;
+}
+
+@utility transition-quick {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+  transition-duration: var(--sp-dur-fast);
+  transition-timing-function: var(--sp-ease-out);
+}
+
+@utility transition-base {
+  transition-property: color, background-color, border-color, box-shadow, opacity, transform;
+  transition-duration: var(--sp-dur);
+  transition-timing-function: var(--sp-ease-out);
+}
+
+/* A thin mono-spaced data face for key combos, ids and code fragments. */
+@utility font-code {
+  font-family: var(--sp-font-mono);
+  font-size: 0.92em;
+  font-variant-ligatures: none;
+}
+
+@keyframes sp-pop-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97) translateY(-2px);
+  }
+}
+@keyframes sp-pop-out {
+  to {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+}
+@keyframes sp-fade-in {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes sp-fade-out {
+  to {
+    opacity: 0;
+  }
+}
+/* Composes with the `translate` property Tailwind uses for centring, so only offset + scale here. */
+@keyframes sp-dialog-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px) scale(0.98);
+  }
+}
+@keyframes sp-dialog-out {
+  to {
+    opacity: 0;
+    transform: translateY(4px) scale(0.99);
+  }
+}

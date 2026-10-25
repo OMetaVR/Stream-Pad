@@ -1,0 +1,28 @@
+[package]
+name = "streampadd"
+description = "StreamPad daemon: numpad ⇄ macropad input engine, macro runtime and IPC server"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+streampad-core.workspace = true
+streampad-input.workspace = true
+streampad-script.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+anyhow.workspace = true
+log.workspace = true
+crossbeam-channel.workspace = true
+tokio = { version = "1.47", features = ["rt-multi-thread", "macros", "net", "sync", "time", "signal", "io-util", "process"] }
+zbus = { version = "5", default-features = false, features = ["tokio"] }
+futures-util = { version = "0.3", default-features = false }
+clap = { version = "4.5", features = ["derive"] }
+notify = { version = "8", default-features = false }
+env_logger = { version = "0.11", default-features = false, features = ["auto-color", "humantime"] }
+libc = "0.2"
+fastrand = "2"
+
+[dev-dependencies]
+tempfile = "3"
+rquickjs = "0.14"

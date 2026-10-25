@@ -1,0 +1,118 @@
+/* Element defaults on top of Tailwind's preflight. */
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  html {
+    background: var(--sp-bg);
+    color: var(--sp-fg);
+    font-family: var(--sp-font-sans);
+    font-size: 13px;
+    line-height: 20px;
+    font-weight: var(--sp-body-weight);
+    /* l with tail and single-storey a keep key names unambiguous; round quotes soften code-ish labels */
+    font-feature-settings: "cv05", "cv11", "ss03";
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    overflow: hidden;
+    user-select: none;
+    -webkit-user-select: none;
+  }
+
+  /* Text the user may want to copy stays selectable. */
+  input,
+  textarea,
+  [contenteditable="true"],
+  .cm-editor,
+  .selectable {
+    user-select: text;
+    -webkit-user-select: text;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--sp-accent) 38%, transparent);
+  }
+
+  :focus {
+    outline: none;
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--sp-focus);
+    outline-offset: 2px;
+  }
+
+  /* Inputs draw their own focus ring via border + shadow. */
+  input:focus-visible,
+  textarea:focus-visible {
+    outline: none;
+  }
+
+  button,
+  [role="button"] {
+    cursor: default;
+  }
+
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: var(--sp-font-mono);
+  }
+
+  /* Lucide defaults (spec: 16 px, stroke 1.75) are set via <LucideProvider> in App; this only aligns. */
+  svg.lucide {
+    flex-shrink: 0;
+  }
+
+  hr {
+    border-color: var(--sp-line);
+  }
+}
+
+/* Thin, quiet scrollbars. WebKit (Tauri on Linux) uses the pseudo-elements; others the standard props. */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--sp-scrollbar);
+  border: 3px solid transparent;
+  border-radius: 999px;
+  background-clip: padding-box;
+}
+::-webkit-scrollbar-thumb:hover {
+  background-color: var(--sp-scrollbar-hover);
+}
+::-webkit-scrollbar-corner {
+  background: transparent;
+}
+@supports not selector(::-webkit-scrollbar) {
+  * {
+    scrollbar-width: thin;
+    scrollbar-color: var(--sp-scrollbar) transparent;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+    scroll-behavior: auto !important;
+  }
+}

@@ -1,0 +1,38 @@
+/* React Flow skin matching the design tokens. */
+.sp-flow .react-flow {
+  --xy-background-color: var(--sp-bg);
+  --xy-edge-stroke: var(--sp-line-strong);
+  --xy-edge-stroke-selected: var(--sp-accent);
+  --xy-edge-stroke-width: 1.75;
+  --xy-connectionline-stroke: var(--sp-accent);
+  --xy-connectionline-stroke-width: 2;
+  --xy-controls-button-background-color: var(--sp-raised);
+  --xy-controls-button-background-color-hover: var(--sp-control-hover);
+  --xy-controls-button-color: var(--sp-muted);
+  --xy-controls-button-color-hover: var(--sp-fg);
+  --xy-controls-button-border-color: var(--sp-line);
+  --xy-controls-box-shadow: var(--sp-shadow-popover);
+  --xy-edge-label-background-color: var(--sp-bg);
+  --xy-edge-label-color: var(--sp-muted);
+  --xy-selection-background-color: color-mix(in srgb, var(--sp-accent) 10%, transparent);
+  --xy-selection-border: 1px solid var(--sp-accent-line);
+  background: var(--sp-bg);
+}
+.sp-flow .react-flow__node { font: inherit; }
+.sp-flow .react-flow__node.selected, .sp-flow .react-flow__node:focus-visible { outline: none; }
+.sp-flow .react-flow__controls { border-radius: 8px; overflow: hidden; }
+.sp-flow .react-flow__edge-textbg { fill: var(--sp-bg); }
+.sp-flow .react-flow__edge-text { font-size: 11px; fill: var(--sp-muted); }
+.sp-flow .react-flow__edge.animated path { stroke: var(--sp-accent); stroke-dasharray: 6 4; }
+.sp-handle.react-flow__handle {
+  width: 11px;
+  height: 11px;
+  background: var(--sp-raised);
+  border: 2px solid var(--sp-line-strong);
+  transition: border-color 120ms ease-out, transform 120ms ease-out;
+}
+.sp-handle.react-flow__handle:hover,
+.sp-handle.react-flow__handle.connectingfrom,
+.sp-handle.react-flow__handle.valid { border-color: var(--sp-accent); transform: translate(var(--tx, 0), -50%) scale(1.25); }
+.sp-handle.react-flow__handle-left { --tx: -50%; }
+.sp-handle.react-flow__handle-right { --tx: 50%; }

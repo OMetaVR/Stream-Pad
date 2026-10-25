@@ -1,0 +1,18 @@
+[package]
+name = "streampad-input"
+description = "StreamPad input engine: evdev grab + uinput mirrors + numpad capture"
+version.workspace = true
+edition.workspace = true
+license.workspace = true
+
+[dependencies]
+streampad-core.workspace = true
+anyhow.workspace = true
+thiserror.workspace = true
+log.workspace = true
+crossbeam-channel.workspace = true
+libc = "0.2"
+nix = { version = "0.30", features = ["ioctl", "poll", "event", "inotify"] }
+
+[dev-dependencies]
+fastrand = "2"

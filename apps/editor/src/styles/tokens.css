@@ -1,0 +1,137 @@
+/*
+ * StreamPad design tokens (docs/SPEC.md §9). Every colour, radius, shadow and duration in the editor comes
+ * from here; Tailwind utilities are mapped onto these variables in index.css (`bg-panel`, `text-muted`, …).
+ *
+ * Theme: <html data-theme="dark|light"> — set by src/lib/theme.ts, which follows the system by default.
+ * Accent: --sp-accent / --sp-accent-fg are set at runtime from the selected profile's colour
+ * (src/lib/theme.ts `applyAccent`); everything accent-tinted derives from them via color-mix().
+ */
+
+:root,
+[data-theme="dark"] {
+  color-scheme: dark;
+
+  /* Surfaces, darkest → lightest */
+  --sp-bg: #0c0d10;
+  --sp-panel: #121318;
+  --sp-raised: #181a20;
+  --sp-control: #20222a;
+  --sp-control-hover: #272a33;
+  --sp-control-active: #2e313b;
+
+  /* Hairlines */
+  --sp-line-subtle: rgba(255, 255, 255, 0.045);
+  --sp-line: rgba(255, 255, 255, 0.07);
+  --sp-line-strong: rgba(255, 255, 255, 0.11);
+
+  /* Text */
+  --sp-fg: #e9e9ef;
+  --sp-muted: #8b8d98;
+  --sp-faint: #5d606b;
+  --sp-body-weight: 430;
+
+  /* Status */
+  --sp-danger: #f0626b;
+  --sp-success: #43c98a;
+  --sp-warning: #f2b44b;
+
+  /* Keycaps (numpad canvas, <Kbd>) — same values as the overlay theme (§8); keybed = the plate under them */
+  --sp-keybed: #121318;
+  --sp-keycap: #1f2128;
+  --sp-keycap-skirt: #14151a;
+  --sp-keycap-highlight: rgba(255, 255, 255, 0.06);
+
+  /* Elevation */
+  --sp-scrim: rgba(4, 5, 7, 0.64);
+  --sp-shadow-raised: 0 1px 0 rgba(255, 255, 255, 0.03) inset, 0 1px 2px rgba(0, 0, 0, 0.4);
+  --sp-shadow-popover: 0 0 0 1px var(--sp-line-strong), 0 12px 32px -8px rgba(0, 0, 0, 0.7),
+    0 4px 10px -4px rgba(0, 0, 0, 0.5);
+  --sp-shadow-dialog: 0 0 0 1px var(--sp-line-strong), 0 28px 70px -12px rgba(0, 0, 0, 0.8);
+
+  --sp-scrollbar: rgba(255, 255, 255, 0.12);
+  --sp-scrollbar-hover: rgba(255, 255, 255, 0.22);
+}
+
+[data-theme="light"] {
+  color-scheme: light;
+
+  --sp-bg: #f4f5f7;
+  --sp-panel: #ffffff;
+  --sp-raised: #ffffff;
+  --sp-control: #eef0f3;
+  --sp-control-hover: #e6e8ec;
+  --sp-control-active: #dde0e6;
+
+  --sp-line-subtle: rgba(17, 19, 26, 0.05);
+  --sp-line: rgba(17, 19, 26, 0.09);
+  --sp-line-strong: rgba(17, 19, 26, 0.15);
+
+  --sp-fg: #17181c;
+  --sp-muted: #6b6e7a;
+  --sp-faint: #9a9daa;
+  --sp-body-weight: 400;
+
+  --sp-danger: #d63a45;
+  --sp-success: #188a57;
+  --sp-warning: #b97800;
+
+  --sp-keybed: #e8eaee;
+  --sp-keycap: #ffffff;
+  --sp-keycap-skirt: #d3d5dc;
+  --sp-keycap-highlight: rgba(255, 255, 255, 0.9);
+
+  --sp-scrim: rgba(23, 24, 28, 0.32);
+  --sp-shadow-raised: 0 1px 2px rgba(17, 19, 26, 0.08);
+  --sp-shadow-popover: 0 0 0 1px var(--sp-line), 0 12px 32px -10px rgba(17, 19, 26, 0.22),
+    0 3px 8px -3px rgba(17, 19, 26, 0.12);
+  --sp-shadow-dialog: 0 0 0 1px var(--sp-line), 0 28px 70px -16px rgba(17, 19, 26, 0.35);
+
+  --sp-scrollbar: rgba(17, 19, 26, 0.16);
+  --sp-scrollbar-hover: rgba(17, 19, 26, 0.3);
+}
+
+:root {
+  /* Accent (runtime) and its derivatives */
+  --sp-accent: #8b7cf6;
+  --sp-accent-fg: #ffffff;
+  --sp-accent-hover: color-mix(in oklab, var(--sp-accent) 88%, white);
+  --sp-accent-soft: color-mix(in oklab, var(--sp-accent) 15%, transparent);
+  --sp-accent-softer: color-mix(in oklab, var(--sp-accent) 8%, transparent);
+  --sp-accent-line: color-mix(in oklab, var(--sp-accent) 48%, transparent);
+  --sp-accent-text: color-mix(in oklab, var(--sp-accent) 78%, var(--sp-fg));
+  --sp-focus: color-mix(in oklab, var(--sp-accent) 80%, transparent);
+  --sp-danger-soft: color-mix(in oklab, var(--sp-danger) 14%, transparent);
+  --sp-success-soft: color-mix(in oklab, var(--sp-success) 14%, transparent);
+  --sp-warning-soft: color-mix(in oklab, var(--sp-warning) 15%, transparent);
+
+  /* Type */
+  --sp-font-sans: "Inter Variable", "Inter", ui-sans-serif, system-ui, sans-serif;
+  --sp-font-mono: "JetBrains Mono Variable", "JetBrains Mono", ui-monospace, monospace;
+
+  /* Radii: controls / cards & menus / panels & dialogs / hero frames */
+  --sp-radius-sm: 6px;
+  --sp-radius-md: 8px;
+  --sp-radius-lg: 12px;
+  --sp-radius-xl: 16px;
+
+  /* Motion */
+  --sp-dur-fast: 120ms;
+  --sp-dur: 160ms;
+  --sp-dur-slow: 220ms;
+  --sp-ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --sp-ease-in: cubic-bezier(0.55, 0, 0.75, 0.2);
+  --sp-ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* Layout */
+  --sp-sidebar-w: 248px;
+  --sp-inspector-w: 360px;
+  --sp-header-h: 44px;
+}
+
+/* Narrow windows (min 960 px): give the numpad canvas room. */
+@media (max-width: 1120px) {
+  :root {
+    --sp-sidebar-w: 224px;
+    --sp-inspector-w: 320px;
+  }
+}

@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="tile" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#22242c"/>
+      <stop offset="1" stop-color="#0f1014"/>
+    </linearGradient>
+    <linearGradient id="cap" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b2e37"/>
+      <stop offset="1" stop-color="#1f2128"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#a396ff"/>
+      <stop offset="1" stop-color="#7a69f0"/>
+    </linearGradient>
+  </defs>
+  <rect x="24" y="24" width="464" height="464" rx="112" fill="url(#tile)"/>
+  <rect x="24.5" y="24.5" width="463" height="463" rx="111.5" fill="none" stroke="#ffffff" stroke-opacity="0.09"/>
+  <g>
+    <!-- 3×3 keycaps; skirt drawn as a darker offset rect beneath each cap -->
+    <g fill="#14151a">
+      <rect x="104" y="112" width="88" height="88" rx="20"/><rect x="212" y="112" width="88" height="88" rx="20"/><rect x="320" y="112" width="88" height="88" rx="20"/>
+      <rect x="104" y="220" width="88" height="88" rx="20"/><rect x="320" y="220" width="88" height="88" rx="20"/>
+      <rect x="104" y="328" width="88" height="88" rx="20"/><rect x="212" y="328" width="88" height="88" rx="20"/><rect x="320" y="328" width="88" height="88" rx="20"/>
+    </g>
+    <g fill="url(#cap)">
+      <rect x="104" y="104" width="88" height="88" rx="20"/><rect x="212" y="104" width="88" height="88" rx="20"/><rect x="320" y="104" width="88" height="88" rx="20"/>
+      <rect x="104" y="212" width="88" height="88" rx="20"/><rect x="320" y="212" width="88" height="88" rx="20"/>
+      <rect x="104" y="320" width="88" height="88" rx="20"/><rect x="212" y="320" width="88" height="88" rx="20"/><rect x="320" y="320" width="88" height="88" rx="20"/>
+    </g>
+    <rect x="212" y="220" width="88" height="88" rx="20" fill="#4b3fb0"/>
+    <rect x="212" y="212" width="88" height="88" rx="20" fill="url(#accent)"/>
+  </g>
+</svg>

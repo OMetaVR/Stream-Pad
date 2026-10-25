@@ -1,0 +1,61 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="256" height="256" viewBox="0 0 256 256">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1d1f26"/>
+      <stop offset="1" stop-color="#0d0e12"/>
+    </linearGradient>
+    <linearGradient id="cap" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2b2e37"/>
+      <stop offset="1" stop-color="#22242b"/>
+    </linearGradient>
+    <linearGradient id="accent" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#b3a6ff"/>
+      <stop offset="1" stop-color="#7d69f2"/>
+    </linearGradient>
+    <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+      <feGaussianBlur stdDeviation="9"/>
+    </filter>
+  </defs>
+  <rect x="12" y="12" width="232" height="232" rx="54" fill="url(#bg)"/>
+  <rect x="12.5" y="12.5" width="231" height="231" rx="53.5" fill="none" stroke="#ffffff" stroke-opacity="0.07"/>
+  <!-- skirts (depth) -->
+  <g fill="#15161b">
+    <rect x="44" y="48" width="50" height="50" rx="13"/>
+    <rect x="103" y="48" width="50" height="50" rx="13"/>
+    <rect x="44" y="107" width="50" height="50" rx="13"/>
+    <rect x="103" y="107" width="50" height="50" rx="13"/>
+    <rect x="44" y="166" width="109" height="50" rx="13"/>
+    <rect x="162" y="166" width="50" height="50" rx="13"/>
+  </g>
+  <!-- keycaps -->
+  <g fill="url(#cap)">
+    <rect x="44" y="44" width="50" height="50" rx="13"/>
+    <rect x="103" y="44" width="50" height="50" rx="13"/>
+    <rect x="44" y="103" width="50" height="50" rx="13"/>
+    <rect x="103" y="103" width="50" height="50" rx="13"/>
+    <rect x="44" y="162" width="109" height="50" rx="13"/>
+    <rect x="162" y="162" width="50" height="50" rx="13"/>
+  </g>
+  <g fill="none" stroke="#ffffff" stroke-opacity="0.07">
+    <rect x="44.5" y="44.5" width="49" height="49" rx="12.5"/>
+    <rect x="103.5" y="44.5" width="49" height="49" rx="12.5"/>
+    <rect x="44.5" y="103.5" width="49" height="49" rx="12.5"/>
+    <rect x="103.5" y="103.5" width="49" height="49" rx="12.5"/>
+    <rect x="44.5" y="162.5" width="108" height="49" rx="12.5"/>
+    <rect x="162.5" y="162.5" width="49" height="49" rx="12.5"/>
+  </g>
+  <!-- accent tall key with play glyph -->
+  <rect x="162" y="48" width="50" height="109" rx="13" fill="#4b3bb5" opacity="0.55" filter="url(#glow)"/>
+  <rect x="162" y="48" width="50" height="109" rx="13" fill="#5a47c9"/>
+  <rect x="162" y="44" width="50" height="109" rx="13" fill="url(#accent)"/>
+  <path d="M180 85.5c0-2.7 2.9-4.4 5.3-3l17.2 9.9c2.3 1.4 2.3 4.7 0 6.1l-17.2 9.9c-2.4 1.4-5.3-.3-5.3-3z" fill="#ffffff"/>
+  <!-- legends -->
+  <g fill="#8b8d98" font-family="Inter, 'Noto Sans', sans-serif" font-weight="600" font-size="17">
+    <text x="55" y="66">7</text>
+    <text x="114" y="66">8</text>
+    <text x="55" y="125">4</text>
+    <text x="114" y="125">5</text>
+    <text x="55" y="184">0</text>
+    <text x="173" y="184">.</text>
+  </g>
+</svg>

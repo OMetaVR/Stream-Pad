@@ -1,0 +1,51 @@
+{
+  "$schema": "https://schema.tauri.app/config/2",
+  "productName": "StreamPad",
+  "mainBinaryName": "streampad",
+  "version": "0.1.0",
+  "identifier": "io.github.ometavr.streampad",
+  "build": {
+    "beforeDevCommand": "bun run dev --port 1420",
+    "devUrl": "http://127.0.0.1:1420",
+    "beforeBuildCommand": "bun run build",
+    "frontendDist": "../dist"
+  },
+  "app": {
+    "windows": [],
+    "security": {
+      "csp": {
+        "default-src": "'self' ipc: http://ipc.localhost",
+        "connect-src": "'self' ipc: http://ipc.localhost",
+        "script-src": "'self'",
+        "style-src": "'self' 'unsafe-inline'",
+        "img-src": "'self' asset: http://asset.localhost data: blob:",
+        "media-src": "'self' asset: http://asset.localhost blob:",
+        "font-src": "'self' data:",
+        "worker-src": "'self' blob:"
+      },
+      "dangerousDisableAssetCspModification": ["style-src"],
+      "assetProtocol": {
+        "enable": true,
+        "scope": {
+          "allow": [
+            "$HOME/**",
+            "/usr/share/icons/**",
+            "/usr/share/pixmaps/**",
+            "/usr/share/streampad/**",
+            "/usr/local/share/icons/**",
+            "/usr/local/share/streampad/**",
+            "/var/lib/flatpak/exports/share/icons/**"
+          ],
+          "requireLiteralLeadingDot": false
+        }
+      }
+    }
+  },
+  "bundle": {
+    "active": true,
+    "targets": ["deb", "rpm", "appimage"],
+    "category": "Utility",
+    "shortDescription": "Turn your numpad into a macropad",
+    "icon": ["icons/32x32.png", "icons/128x128.png", "icons/128x128@2x.png", "icons/icon.png"]
+  }
+}

@@ -1,0 +1,18 @@
+[Unit]
+Description=StreamPad numpad macropad daemon
+Documentation=https://github.com/OMetaVR/Stream-Pad
+After=graphical-session.target
+PartOf=graphical-session.target
+
+[Service]
+Type=simple
+ExecStart=%h/.local/bin/streampadd
+Restart=on-failure
+RestartSec=2
+# Only the daemon is stopped; the overlay follows via PR_SET_PDEATHSIG and launched apps live in their own
+# scopes, so restarting StreamPad never closes anything the user opened with it.
+KillMode=process
+Environment=RUST_LOG=info
+
+[Install]
+WantedBy=graphical-session.target

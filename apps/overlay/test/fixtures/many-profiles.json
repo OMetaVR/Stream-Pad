@@ -1,0 +1,341 @@
+{
+  "version": "0.1.0",
+  "macroMode": true,
+  "profileIndex": 9,
+  "profiles": [
+    {
+      "id": "p_audio",
+      "name": "Audio",
+      "color": null,
+      "icon": "lucide:audio-lines"
+    },
+    {
+      "id": "p_apps",
+      "name": "Apps",
+      "color": "#4fb3ff",
+      "icon": "lucide:layout-grid"
+    },
+    {
+      "id": "p_web",
+      "name": "Web",
+      "color": null,
+      "icon": "lucide:globe"
+    },
+    {
+      "id": "p_windows",
+      "name": "Windows",
+      "color": "#3ecf8e",
+      "icon": "lucide:app-window"
+    },
+    {
+      "id": "p_desktops",
+      "name": "Desktops",
+      "color": null,
+      "icon": "lucide:layers"
+    },
+    {
+      "id": "p_stream",
+      "name": "Stream",
+      "color": "#ff7a59",
+      "icon": "lucide:radio-tower"
+    },
+    {
+      "id": "p_extra0",
+      "name": "Audio 2",
+      "color": null,
+      "icon": "lucide:audio-lines"
+    },
+    {
+      "id": "p_extra1",
+      "name": "Apps 3",
+      "color": "#4fb3ff",
+      "icon": "lucide:layout-grid"
+    },
+    {
+      "id": "p_extra2",
+      "name": "Web 4",
+      "color": null,
+      "icon": "lucide:globe"
+    },
+    {
+      "id": "p_extra3",
+      "name": "Windows 5",
+      "color": "#3ecf8e",
+      "icon": "lucide:app-window"
+    },
+    {
+      "id": "p_extra4",
+      "name": "Desktops 6",
+      "color": null,
+      "icon": "lucide:layers"
+    },
+    {
+      "id": "p_extra5",
+      "name": "Audio 7",
+      "color": null,
+      "icon": "lucide:audio-lines"
+    }
+  ],
+  "profile": {
+    "id": "p_extra3",
+    "name": "Windows 5",
+    "color": "#3ecf8e",
+    "icon": "lucide:app-window",
+    "keys": {
+      "NumLock": {
+        "label": "",
+        "icon": null,
+        "iconTint": false,
+        "cover": null,
+        "color": null,
+        "kind": "empty",
+        "global": null,
+        "legend": {
+          "main": "Num",
+          "sub": "Lock"
+        }
+      },
+      "KPSlash": {
+        "label": "",
+        "icon": null,
+        "iconTint": false,
+        "cover": null,
+        "color": null,
+        "kind": "empty",
+        "global": null,
+        "legend": {
+          "main": "/",
+          "sub": null
+        }
+      },
+      "KPAsterisk": {
+        "label": "",
+        "icon": null,
+        "iconTint": false,
+        "cover": null,
+        "color": null,
+        "kind": "empty",
+        "global": null,
+        "legend": {
+          "main": "*",
+          "sub": null
+        }
+      },
+      "KPMinus": {
+        "label": "Prev",
+        "icon": "lucide:chevron-up",
+        "iconTint": true,
+        "cover": null,
+        "color": null,
+        "kind": "global",
+        "global": "prevProfile",
+        "legend": {
+          "main": "−",
+          "sub": null
+        }
+      },
+      "KP7": {
+        "label": "Minimize",
+        "icon": "lucide:minimize-2",
+        "iconTint": true,
+        "cover": null,
+        "color": null,
+        "kind": "macro",
+        "global": null,
+        "legend": {
+          "main": "7",
+          "sub": "Home"
+        }
+      },
+      "KP8": {
+        "label": "Monitor up",
+        "icon": "lucide:arrow-up-to-line",
+        "iconTint": true,
+        "cover": null,
+        "color": null,
+        "kind": "macro",
+        "global": null,
+        "legend": {
+          "main": "8",
+          "sub": "↑"
+        }
+      },
+      "KP9": {
+        "label": "Keep above",
+        "icon": "lucide:pin",
+        "iconTint": true,
+        "cover": null,
+        "color": null,
+        "kind": "macro",
+        "global": null,
+        "legend": {
+          "main": "9",
+          "sub": "PgUp"
+        }
+      },
+      "KPPlus": {
+        "label": "Next",
+        "icon": "lucide:chevron-down",
+        "iconTint": true,
+        "cover": null,
+        "color": null,
+        "kind": "global",
+        "global": "nextProfile",
+        "legend": {
+          "main": "+",
+          "sub": null
+        }
+      },
+      "KP4": {
+        "label": "Monitor left",
+        "icon": "lucide:arrow-left-to-line",
+        "iconTint": true,
+        "cover": null,
+        "color": null,
+        "kind": "macro",
+        "global": null,
+        "legend": {
+          "main": "4",
+          "sub": "←"
+        }
+      },
+      "KP5": {
+        "label": "Maximize",
+        "icon": "lucide:maximize-2",
+        "iconTint": true,
+        "cover": null,
+        "color": null,
+        "kind": "macro",
+        "global": null,
+        "legend": {
+          "main": "5",
+          "sub": null
+        }
+      },
+      "KP6": {
+        "label": "Monitor right",
+        "icon": "lucide:arrow-right-to-line",
+        "iconTint": true,
+        "cover": null,
+        "color": null,
+        "kind": "macro",
+        "global": null,
+        "legend": {
+          "main": "6",
+          "sub": "→"
+        }
+      },
+      "KP1": {
+        "label": "Center",
+        "icon": "lucide:locate",
+        "iconTint": true,
+        "cover": null,
+        "color": null,
+        "kind": "macro",
+        "global": null,
+        "legend": {
+          "main": "1",
+          "sub": "End"
+        }
+      },
+      "KP2": {
+        "label": "Monitor down",
+        "icon": "lucide:arrow-down-to-line",
+        "iconTint": true,
+        "cover": null,
+        "color": null,
+        "kind": "macro",
+        "global": null,
+        "legend": {
+          "main": "2",
+          "sub": "↓"
+        }
+      },
+      "KP3": {
+        "label": "Fullscreen",
+        "icon": "lucide:expand",
+        "iconTint": true,
+        "cover": null,
+        "color": null,
+        "kind": "macro",
+        "global": null,
+        "legend": {
+          "main": "3",
+          "sub": "PgDn"
+        }
+      },
+      "KPEnter": {
+        "label": "Show / Hide",
+        "icon": "lucide:eye",
+        "iconTint": true,
+        "cover": null,
+        "color": null,
+        "kind": "global",
+        "global": "toggleOverlay",
+        "legend": {
+          "main": "Enter",
+          "sub": null
+        }
+      },
+      "KP0": {
+        "label": "",
+        "icon": null,
+        "iconTint": false,
+        "cover": null,
+        "color": null,
+        "kind": "empty",
+        "global": null,
+        "legend": {
+          "main": "0",
+          "sub": "Ins"
+        }
+      },
+      "KPDot": {
+        "label": "",
+        "icon": null,
+        "iconTint": false,
+        "cover": null,
+        "color": null,
+        "kind": "empty",
+        "global": null,
+        "legend": {
+          "main": ".",
+          "sub": "Del"
+        }
+      }
+    }
+  },
+  "overlay": {
+    "visible": true,
+    "pinned": true,
+    "preview": false,
+    "output": null,
+    "settings": {
+      "edge": "bottom",
+      "align": "end",
+      "offset": 0,
+      "monitor": null,
+      "scale": 1.0,
+      "theme": "dark",
+      "accent": "#8b7cf6",
+      "opacity": 0.94,
+      "blur": true,
+      "showHeader": true,
+      "showLegends": true,
+      "legendStyle": "full",
+      "showLabels": true,
+      "animationMs": 320,
+      "peekOnModeChange": true,
+      "peekOnProfileChange": true,
+      "peekMs": 1600
+    },
+    "accent": "#3ecf8e"
+  },
+  "learn": false,
+  "devices": [],
+  "integrations": {
+    "kwin": true,
+    "layerShell": true
+  },
+  "configError": null
+}

@@ -1,0 +1,13 @@
+[Desktop Entry]
+Type=Application
+Name=StreamPad
+GenericName=Numpad Macropad
+Comment=Turn your numpad into a profile-based macropad with an on-screen display
+Exec=streampad
+Icon=io.github.ometavr.streampad
+Terminal=false
+Categories=Utility;Settings;HardwareSettings;
+Keywords=numpad;macro;macropad;stream;deck;hotkey;shortcut;keyboard;
+StartupNotify=true
+StartupWMClass=streampad
+SingleMainWindow=true
