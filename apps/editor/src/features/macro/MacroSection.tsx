@@ -54,6 +54,16 @@ export function MacroSection({ profileId, keyId, binding, onChange }: MacroSecti
 
   const setMacro = (next: Macro | null, coalesce?: string) =>
     editor.updateBinding(profileId, keyId, (b) => {
+      // Labels/icons that came from the first action keep following it until the user changes them.
+      const before = b.macro?.type === "graph" ? firstAction(b.macro) : undefined;
+      const after = next?.type === "graph" ? firstAction(next) : undefined;
+      if (before && after && before.id === after.id) {
+        const def = nodeDef(after.kind);
+        const oldLabel = def.defaultLabel?.(before.params, ctx) ?? "";
+        const oldIcon = def.defaultIcon?.(before.params, ctx) ?? null;
+        if (b.label === "" || b.label === oldLabel) b.label = def.defaultLabel?.(after.params, ctx) ?? b.label;
+        if (b.icon === null || b.icon === oldIcon) b.icon = def.defaultIcon?.(after.params, ctx) ?? b.icon;
+      }
       b.macro = next;
     }, { coalesce: coalesce ?? false });
 

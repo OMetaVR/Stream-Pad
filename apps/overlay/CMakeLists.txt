@@ -34,6 +34,9 @@ qt_add_executable(streampad-overlay
     src/platform.cpp src/platform.h
     src/daemonclient.cpp src/daemonclient.h
     src/mocksource.cpp src/mocksource.h
+    src/capture.cpp src/capture.h
+    src/capturescript.cpp src/capturescript.h
+    src/steppedclock.cpp src/steppedclock.h
     src/outputs.cpp src/outputs.h
     src/screenshot.cpp src/screenshot.h
 )

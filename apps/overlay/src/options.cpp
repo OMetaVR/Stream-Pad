@@ -43,7 +43,12 @@ Options parseOptions(const QCoreApplication &app)
     const QCommandLineOption mockToast(QStringLiteral("mock-toast"),
                                        QStringLiteral("Show a toast (repeatable); prefix with info:, success: or error:."),
                                        QStringLiteral("text"));
-    parser.addOptions({socket, mock, screenshot, afterMs, mockKey, mockToast});
+    const QCommandLineOption capture(QStringLiteral("capture"),
+                                     QStringLiteral("Render a script of daemon events to a PNG sequence on a fixed-step clock (requires --out)."),
+                                     QStringLiteral("script.json"));
+    const QCommandLineOption out(QStringLiteral("out"), QStringLiteral("Output directory for --capture."),
+                                 QStringLiteral("dir"));
+    parser.addOptions({socket, mock, screenshot, afterMs, mockKey, mockToast, capture, out});
     parser.process(app);
 
     Options options;
@@ -52,6 +57,8 @@ Options parseOptions(const QCoreApplication &app)
     options.screenshotPath = parser.value(screenshot);
     options.mockKeys = parser.values(mockKey);
     options.mockToasts = parser.values(mockToast);
+    options.captureScript = parser.value(capture);
+    options.captureDir = parser.value(out);
 
     if (parser.isSet(afterMs)) {
         bool ok = false;
@@ -61,6 +68,12 @@ Options parseOptions(const QCoreApplication &app)
         if (options.screenshotPath.isEmpty())
             fail(QStringLiteral("--after-ms requires --screenshot"));
     }
+    if (options.captureScript.isEmpty() != options.captureDir.isEmpty())
+        fail(QStringLiteral("--capture and --out go together"));
+    if (!options.captureScript.isEmpty()
+        && (!options.mockFile.isEmpty() || !options.screenshotPath.isEmpty() || !options.mockKeys.isEmpty()
+            || !options.mockToasts.isEmpty()))
+        fail(QStringLiteral("--capture cannot be combined with --mock, --screenshot, --mock-key or --mock-toast"));
     const bool mockOnly = !options.screenshotPath.isEmpty() || !options.mockKeys.isEmpty() || !options.mockToasts.isEmpty();
     if (mockOnly && options.mockFile.isEmpty())
         fail(QStringLiteral("--screenshot, --mock-key and --mock-toast require --mock"));

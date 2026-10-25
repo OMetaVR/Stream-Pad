@@ -8,7 +8,7 @@ import { compileMock } from "./mock/compile";
 import { MockDaemon } from "./mock/daemon";
 import { MOCK_APPS, MOCK_KDE_SHORTCUTS } from "./mock/fixtures";
 import { sampleConfig } from "./mock/sample-config";
-import type { Config, DeviceInfo, KeyId, OutputInfo, WindowInfo } from "./types";
+import type { Config, DaemonEvent, DeviceInfo, KeyId, OutputInfo, WindowInfo } from "./types";
 
 const CONFIG_KEY = "streampad.mock.config";
 const COVERS_KEY = "streampad.mock.covers";
@@ -26,6 +26,8 @@ export interface MockControls {
   isRunning(): boolean;
   /** Replace the stored config with the sample profiles and reload the page. */
   resetConfig(): void;
+  /** Deliver a daemon event as if the daemon had sent it (the promo page drives traces/runs on its own clock). */
+  emit(event: DaemonEvent): void;
 }
 
 let controls: MockControls | null = null;
@@ -107,6 +109,7 @@ export function createMockBackend(): Backend {
     startDaemon: () => daemon.start(),
     stopDaemon: () => daemon.stop("Stopped from the Simulate panel"),
     isRunning: () => daemon.running,
+    emit: (event) => channel.pushEvent(event),
     resetConfig() {
       localStorage.removeItem(CONFIG_KEY);
       localStorage.removeItem(COVERS_KEY);

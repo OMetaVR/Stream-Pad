@@ -15,6 +15,9 @@ struct Options {
     int screenshotAfterMs = -1; // < 0: capture once the panel is at rest
     QStringList mockKeys;       // KeyIds held down once the panel is shown
     QStringList mockToasts;     // "[info|success|error:]text"
+    // Frame-sequence capture on a fixed-step clock (needs no daemon and no --mock).
+    QString captureScript;
+    QString captureDir;
 };
 
 // Parses the command line; prints usage and exits on invalid input.

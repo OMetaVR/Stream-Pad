@@ -7,7 +7,7 @@ Turn your keyboard's numpad into a profile-based macropad, with an on-screen num
 edge of your screen.
 
 <p align="center">
-  <img src="docs/images/overlay.png" alt="The on-screen pad" width="420">
+  <img src="docs/images/promo.gif" alt="StreamPad: Scroll Lock turns the numpad into a macropad, Numpad Enter slides in the on-screen pad, and the editor designs every key" width="840">
 </p>
 
 - **Scroll Lock** flips the numpad between normal numbers and macros (its light shows macro mode).

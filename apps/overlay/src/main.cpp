@@ -1,3 +1,4 @@
+#include "capture.h"
 #include "controller.h"
 #include "daemonclient.h"
 #include "iconprovider.h"
@@ -6,6 +7,7 @@
 #include "outputs.h"
 #include "platform.h"
 #include "screenshot.h"
+#include "steppedclock.h"
 #include "store.h"
 
 #include <QFont>
@@ -15,6 +17,7 @@
 #include <QLoggingCategory>
 #include <QQmlApplicationEngine>
 #include <QQuickWindow>
+#include <QTimer>
 
 #include <memory>
 
@@ -108,6 +111,19 @@ int main(int argc, char *argv[])
     QQuickWindow::setTextRenderType(QQuickWindow::NativeTextRendering);
     useBundledFont();
 
+    // Capture mode: animations and QML timers must only ever see the virtual clock, so it goes in
+    // before the engine creates any of them.
+    std::unique_ptr<SteppedClock> clock;
+    streampad::CaptureScript captureScript;
+    if (!options.captureScript.isEmpty()) {
+        QString error;
+        if (!captureScript.load(options.captureScript, &error)) {
+            qCCritical(lcMain) << error;
+            return 2;
+        }
+        clock = std::make_unique<SteppedClock>();
+    }
+
     OverlayStore store(nullptr);
     OverlayController controller(&store);
 
@@ -123,10 +139,15 @@ int main(int argc, char *argv[])
 
     std::unique_ptr<MockSource> mock;
     std::unique_ptr<ScreenshotTask> screenshot;
+    std::unique_ptr<CaptureTask> capture;
     std::unique_ptr<DaemonClient> client;
     std::unique_ptr<OutputWatcher> outputs;
 
-    if (!options.mockFile.isEmpty()) {
+    if (clock) {
+        capture = std::make_unique<CaptureTask>(window, &controller, &store, clock.get(), captureScript,
+                                                options.captureDir);
+        QTimer::singleShot(0, capture.get(), &CaptureTask::run);
+    } else if (!options.mockFile.isEmpty()) {
         store.setConnected(true);
         mock = std::make_unique<MockSource>(options.mockFile);
         QObject::connect(mock.get(), &MockSource::stateReceived, &store, &OverlayStore::applyState);

@@ -1,0 +1,316 @@
+{
+  "configError": null,
+  "devices": [],
+  "integrations": {
+    "kwin": true,
+    "layerShell": null
+  },
+  "learn": false,
+  "macroMode": false,
+  "overlay": {
+    "accent": "#8b7cf6",
+    "output": null,
+    "pinned": false,
+    "preview": false,
+    "settings": {
+      "accent": "#8b7cf6",
+      "align": "end",
+      "animationMs": 320,
+      "blur": true,
+      "edge": "bottom",
+      "legendStyle": "full",
+      "monitor": null,
+      "offset": 0,
+      "opacity": 0.94,
+      "peekMs": 1600,
+      "peekOnModeChange": true,
+      "peekOnProfileChange": true,
+      "scale": 1.0,
+      "showHeader": true,
+      "showLabels": true,
+      "showLegends": true,
+      "theme": "dark"
+    },
+    "visible": false
+  },
+  "profile": {
+    "color": null,
+    "icon": "lucide:audio-lines",
+    "id": "p_5ff1f0bb",
+    "keys": {
+      "KP0": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": null,
+        "icon": "lucide:volume-x",
+        "iconTint": true,
+        "kind": "macro",
+        "label": "Mute",
+        "legend": {
+          "main": "0",
+          "sub": "Ins"
+        }
+      },
+      "KP1": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": null,
+        "icon": null,
+        "iconTint": false,
+        "kind": "empty",
+        "label": "",
+        "legend": {
+          "main": "1",
+          "sub": "End"
+        }
+      },
+      "KP2": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": null,
+        "icon": "lucide:volume-1",
+        "iconTint": true,
+        "kind": "macro",
+        "label": "Volume \u2212",
+        "legend": {
+          "main": "2",
+          "sub": "\u2193"
+        }
+      },
+      "KP3": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": null,
+        "icon": "lucide:gamepad-2",
+        "iconTint": true,
+        "kind": "macro",
+        "label": "Game Mode",
+        "legend": {
+          "main": "3",
+          "sub": "PgDn"
+        }
+      },
+      "KP4": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": null,
+        "icon": "lucide:skip-back",
+        "iconTint": true,
+        "kind": "macro",
+        "label": "Previous",
+        "legend": {
+          "main": "4",
+          "sub": "\u2190"
+        }
+      },
+      "KP5": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": null,
+        "icon": "lucide:play",
+        "iconTint": true,
+        "kind": "macro",
+        "label": "Play / Pause",
+        "legend": {
+          "main": "5",
+          "sub": null
+        }
+      },
+      "KP6": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": null,
+        "icon": "lucide:skip-forward",
+        "iconTint": true,
+        "kind": "macro",
+        "label": "Next",
+        "legend": {
+          "main": "6",
+          "sub": "\u2192"
+        }
+      },
+      "KP7": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": null,
+        "icon": null,
+        "iconTint": false,
+        "kind": "empty",
+        "label": "",
+        "legend": {
+          "main": "7",
+          "sub": "Home"
+        }
+      },
+      "KP8": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": null,
+        "icon": "lucide:volume-2",
+        "iconTint": true,
+        "kind": "macro",
+        "label": "Volume +",
+        "legend": {
+          "main": "8",
+          "sub": "\u2191"
+        }
+      },
+      "KP9": {
+        "color": null,
+        "cover": "covers/synthwave.png",
+        "coverCrop": null,
+        "global": null,
+        "icon": "lucide:music",
+        "iconTint": true,
+        "kind": "macro",
+        "label": "Playlist",
+        "legend": {
+          "main": "9",
+          "sub": "PgUp"
+        }
+      },
+      "KPAsterisk": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": null,
+        "icon": null,
+        "iconTint": false,
+        "kind": "empty",
+        "label": "",
+        "legend": {
+          "main": "*",
+          "sub": null
+        }
+      },
+      "KPDot": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": null,
+        "icon": null,
+        "iconTint": false,
+        "kind": "empty",
+        "label": "",
+        "legend": {
+          "main": ".",
+          "sub": "Del"
+        }
+      },
+      "KPEnter": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": "toggleOverlay",
+        "icon": "lucide:eye",
+        "iconTint": true,
+        "kind": "global",
+        "label": "Show / Hide",
+        "legend": {
+          "main": "Enter",
+          "sub": null
+        }
+      },
+      "KPMinus": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": "prevProfile",
+        "icon": "lucide:chevron-up",
+        "iconTint": true,
+        "kind": "global",
+        "label": "Prev",
+        "legend": {
+          "main": "\u2212",
+          "sub": null
+        }
+      },
+      "KPPlus": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": "nextProfile",
+        "icon": "lucide:chevron-down",
+        "iconTint": true,
+        "kind": "global",
+        "label": "Next",
+        "legend": {
+          "main": "+",
+          "sub": null
+        }
+      },
+      "KPSlash": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": null,
+        "icon": null,
+        "iconTint": false,
+        "kind": "empty",
+        "label": "",
+        "legend": {
+          "main": "/",
+          "sub": null
+        }
+      },
+      "NumLock": {
+        "color": null,
+        "cover": null,
+        "coverCrop": null,
+        "global": null,
+        "icon": null,
+        "iconTint": false,
+        "kind": "empty",
+        "label": "",
+        "legend": {
+          "main": "Num",
+          "sub": "Lock"
+        }
+      }
+    },
+    "name": "Audio"
+  },
+  "profileIndex": 0,
+  "profiles": [
+    {
+      "color": null,
+      "icon": "lucide:audio-lines",
+      "id": "p_5ff1f0bb",
+      "name": "Audio"
+    },
+    {
+      "color": "#5b9cf6",
+      "icon": "lucide:layout-grid",
+      "id": "p_140d8ab0",
+      "name": "Apps"
+    },
+    {
+      "color": "#3fbf9b",
+      "icon": "lucide:globe",
+      "id": "p_0bc193fe",
+      "name": "Web"
+    },
+    {
+      "color": "#f0a35b",
+      "icon": "lucide:app-window",
+      "id": "p_8c70d501",
+      "name": "Windows"
+    },
+    {
+      "color": "#e5729a",
+      "icon": "lucide:layers",
+      "id": "p_96d2c5f8",
+      "name": "Desktops"
+    }
+  ],
+  "version": "0.1.0"
+}

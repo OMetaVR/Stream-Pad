@@ -7,3 +7,6 @@ apps/editor/src-tauri/gen/
 apps/overlay/build/
 *.swp
 .DS_Store
+/promo/build/
+/promo/out/
+/promo/node_modules/

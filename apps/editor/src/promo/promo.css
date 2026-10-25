@@ -1,0 +1,19 @@
+/*
+ * Promo mode: no wall-clock motion. The director page (data-promo="director") draws everything from the
+ * timeline, so CSS motion is off there. Inside the editor frame the app's own CSS animations/transitions
+ * are kept but paused and stepped on the virtual clock (src/promo/editor/boot.tsx).
+ */
+[data-promo="director"] *,
+[data-promo="director"] *::before,
+[data-promo="director"] *::after {
+  transition: none !important;
+  animation: none !important;
+}
+[data-promo] * {
+  caret-color: transparent !important;
+}
+
+/* Tooltips open on programmatic focus (dialogs focus their first control); a real pointer never hovered them. */
+[data-promo] [data-radix-popper-content-wrapper]:has([role="tooltip"]) {
+  display: none !important;
+}

@@ -7,7 +7,7 @@ import { getBackend } from "@/lib/backend";
 import { cn } from "@/lib/cn";
 import { useHotkey } from "@/lib/hotkeys";
 import { GLOBAL_ACTION_INFO, globalOf } from "@/lib/model";
-import { KEY_IDS, KEY_INFO, type KeyId } from "@/lib/types";
+import { KEY_IDS, KEY_INFO, type CropRect, type KeyId } from "@/lib/types";
 import { useDaemon, useDaemonEvent, useKeyPress } from "@/state/daemon";
 import { useConfig, useSelectedProfile } from "@/state/selectors";
 import { editor, useEditor } from "@/state/store";
@@ -51,6 +51,44 @@ function neighbour(from: KeyId, dx: number, dy: number): KeyId {
     row += dy;
   }
   return from;
+}
+
+/** Base look of a keycap (shape, surface, layout of its face) — shared with the promo page's intro. */
+export const KEYCAP_CLASS =
+  "group relative flex flex-col items-center justify-center gap-1 overflow-hidden rounded-[11px] bg-keycap pt-3 text-fg outline-none transition-[transform,box-shadow,filter] duration-100";
+/** Resting keycap depth: top highlight + skirt. */
+export const KEYCAP_SHADOW = "shadow-[inset_0_1px_0_var(--sp-keycap-highlight),0_3px_0_var(--sp-keycap-skirt)]";
+/** Pad geometry (px at scale 1). */
+export const PAD_GEOMETRY = { unit: UNIT, gap: GAP, pad: PAD } as const;
+
+export interface KeycapFaceProps {
+  keyId: KeyId;
+  label?: string | null;
+  icon?: string | null;
+  /** Resolved cover URL. */
+  cover?: string | null;
+  coverCrop?: CropRect | null;
+  global?: boolean;
+  empty?: boolean;
+  selected?: boolean;
+}
+
+/** What a keycap shows: cover, legend, icon and label. Pure — render it inside an element with KEYCAP_CLASS. */
+export function KeycapFace({ keyId, label, icon, cover, coverCrop = null, global = false, empty = false, selected = false }: KeycapFaceProps) {
+  const info = KEY_INFO[keyId];
+  return (
+    <>
+      {cover && <CoverImage src={cover} crop={coverCrop} />}
+      <span className={cn("absolute left-2 top-1.5 flex items-baseline gap-1 leading-none", cover && "rounded-[4px] bg-black/55 px-1 py-0.5")}>
+        <span className={cn("text-sm font-semibold", cover ? "text-white" : empty ? "text-faint" : "text-muted")}>{info.legend.main}</span>
+        {info.legend.sub && !cover && <span className="text-2xs text-faint">{info.legend.sub}</span>}
+      </span>
+      {global && <Lock size={11} className="absolute right-2 top-2 text-faint" aria-hidden />}
+      {!cover && icon && <RefIcon iconRef={icon} size={22} className={global ? "text-accent-text" : "text-fg"} />}
+      {!cover && label && <span className="line-clamp-2 max-w-full px-2 text-center text-xs leading-tight text-muted">{label}</span>}
+      {!cover && empty && selected && <span className="text-2xs text-faint">Enter to set up</span>}
+    </>
+  );
 }
 
 function Keycap({ keyId, profileId }: { keyId: KeyId; profileId: string }) {
@@ -118,23 +156,16 @@ function Keycap({ keyId, profileId }: { keyId: KeyId; profileId: string }) {
         ...(binding?.color && !global ? { background: `color-mix(in srgb, ${binding.color} 26%, var(--sp-keycap))` } : null),
       }}
       className={cn(
-        "group relative flex flex-col items-center justify-center gap-1 overflow-hidden rounded-[11px] bg-keycap pt-3 text-fg outline-none transition-[transform,box-shadow,filter] duration-100",
-        "shadow-[inset_0_1px_0_var(--sp-keycap-highlight),0_3px_0_var(--sp-keycap-skirt)] hover:brightness-110",
+        KEYCAP_CLASS,
+        KEYCAP_SHADOW,
+        "hover:brightness-110",
         (pressed || flash) && "translate-y-0.5 shadow-[inset_0_1px_0_var(--sp-keycap-highlight),0_1px_0_var(--sp-keycap-skirt),0_0_0_3px_var(--sp-accent-soft)]",
         selected && "ring-2 ring-accent ring-offset-2 ring-offset-(--sp-keybed)",
         dropping && "ring-2 ring-accent/60",
         "focus-visible:ring-2 focus-visible:ring-accent",
       )}
     >
-      {cover && <CoverImage src={cover} crop={binding?.coverCrop ?? null} />}
-      <span className={cn("absolute left-2 top-1.5 flex items-baseline gap-1 leading-none", cover && "rounded-[4px] bg-black/55 px-1 py-0.5")}>
-        <span className={cn("text-sm font-semibold", cover ? "text-white" : empty ? "text-faint" : "text-muted")}>{info.legend.main}</span>
-        {info.legend.sub && !cover && <span className="text-2xs text-faint">{info.legend.sub}</span>}
-      </span>
-      {global && <Lock size={11} className="absolute right-2 top-2 text-faint" aria-hidden />}
-      {!cover && icon && <RefIcon iconRef={icon} size={22} className={global ? "text-accent-text" : "text-fg"} />}
-      {!cover && label && <span className="line-clamp-2 max-w-full px-2 text-center text-xs leading-tight text-muted">{label}</span>}
-      {!cover && empty && selected && <span className="text-2xs text-faint">Enter to set up</span>}
+      <KeycapFace keyId={keyId} label={label} icon={icon} cover={cover} coverCrop={binding?.coverCrop ?? null} global={!!global} empty={empty} selected={selected} />
     </button>
   );
 

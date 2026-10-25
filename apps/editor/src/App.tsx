@@ -82,7 +82,8 @@ export function App() {
           </div>
           <Toaster />
           <ConfirmHost />
-          {getBackend().isMock && (
+          {/* The promo page (promo.html) renders the real app without the dev-only panel. */}
+          {getBackend().isMock && !document.documentElement.hasAttribute("data-promo") && (
             <Suspense>
               <SimulatePanel />
             </Suspense>
