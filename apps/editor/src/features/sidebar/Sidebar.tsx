@@ -11,6 +11,7 @@ import { useHotkey } from "@/lib/hotkeys";
 import type { Profile } from "@/lib/types";
 import { useDaemon } from "@/state/daemon";
 import { editor, useEditor, useRequest } from "@/state/store";
+import { useUpdates } from "@/state/updates";
 import { Button, ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuSeparator, ContextMenuTrigger, IconButton, RefIcon, ScrollArea, toast, Tooltip } from "@/ui";
 
 function exportProfile(p: Profile) {
@@ -132,6 +133,7 @@ export function Sidebar() {
   const selected = useEditor((s) => s.selection.profileId);
   const [renaming, setRenaming] = useState<string | null>(null);
   const sensors = useSensors(useSensor(PointerSensor, { activationConstraint: { distance: 5 } }));
+  const updateReady = useUpdates((s) => !!s.info?.available && s.install.kind !== "installed");
   useRequest("renameProfile", (id) => setRenaming(typeof id === "string" ? id : selected));
   useHotkey("f2", () => (selected ? void setRenaming(selected) : false), { description: "Rename profile" });
   useHotkey("mod+n", () => void editor.addProfile(), { description: "New profile" });
@@ -173,8 +175,9 @@ export function Sidebar() {
         </p>
       </ScrollArea>
       <div className="border-t border-line p-2">
-        <Button variant="ghost" icon={Settings} className="w-full justify-start" onClick={() => editor.openSettings()}>
+        <Button variant="ghost" icon={Settings} className="w-full justify-start" onClick={() => editor.openSettings(updateReady ? "about" : undefined)}>
           Settings
+          {updateReady && <span className="ml-auto size-1.5 rounded-full bg-accent" title="An update is available" />}
         </Button>
       </div>
     </aside>

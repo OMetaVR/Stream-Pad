@@ -5,6 +5,7 @@ import { cn } from "@/lib/cn";
 import { editor, type SettingsSection } from "@/state/store";
 import { ScrollArea } from "@/ui";
 import { OverlaySection } from "./OverlaySection";
+import { UpdatesSection } from "./UpdatesSection";
 import { AboutSection, DevicesSection, GeneralSection, GlobalsSection, ScriptingSection } from "./sections";
 
 const SECTIONS: { id: SettingsSection; label: string; icon: LucideIcon; render: () => React.ReactNode }[] = [
@@ -13,7 +14,7 @@ const SECTIONS: { id: SettingsSection; label: string; icon: LucideIcon; render: 
   { id: "overlay", label: "On-screen pad", icon: Layers, render: () => <OverlaySection /> },
   { id: "devices", label: "Keyboards", icon: Monitor, render: () => <DevicesSection /> },
   { id: "scripting", label: "Scripting", icon: SquareCode, render: () => <ScriptingSection /> },
-  { id: "about", label: "About", icon: Info, render: () => <AboutSection /> },
+  { id: "about", label: "Updates & about", icon: Info, render: () => (<><UpdatesSection /><AboutSection /></>) },
 ];
 
 export function SettingsView({ section = "general" }: { section?: SettingsSection }) {

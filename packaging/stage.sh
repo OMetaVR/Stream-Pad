@@ -9,7 +9,7 @@
 set -euo pipefail
 
 root=$(cd "$(dirname "$0")/.." && pwd)
-destdir=${1:?usage: stage.sh DESTDIR PREFIX}
+destdir=${1?usage: stage.sh DESTDIR PREFIX}
 prefix=${2:?usage: stage.sh DESTDIR PREFIX}
 target=${TARGET:-$root/target/release-all}
 build=${BUILD:-$root/build}

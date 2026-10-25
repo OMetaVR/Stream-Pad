@@ -8,6 +8,31 @@ import type { Config, DaemonEvent, DaemonState, DeviceInfo, KeyId, Macro, Output
 
 export type AssetKind = "cover" | "icon";
 
+/** How this copy was installed, which decides how it updates. */
+export type InstallMethod = "pacman" | "user" | "manual";
+
+export interface UpdateInfo {
+  current: string;
+  latest: string;
+  /** `latest` is newer than `current`. */
+  available: boolean;
+  name: string;
+  /** Release notes (Markdown). */
+  notes: string;
+  /** Release page. */
+  url: string;
+  publishedAt: string;
+  method: InstallMethod;
+  /** Download `installUpdate` would use, if the release has one for this install method. */
+  asset: string | null;
+}
+
+export interface UpdateProgress {
+  phase: "download" | "install" | "done";
+  received: number;
+  total: number;
+}
+
 export interface AppEntry {
   /** Desktop file id without ".desktop", e.g. "org.kde.dolphin". Used as `app.launch` param. */
   id: string;
@@ -91,6 +116,14 @@ export interface Backend {
   setAutostart(on: boolean): Promise<void>;
   openPath(path: string): Promise<void>;
   appVersion(): string;
+
+  // ---- updates ------------------------------------------------------------------------------------------
+  /** Latest GitHub release vs this version. */
+  checkForUpdate(): Promise<UpdateInfo>;
+  /** Download, verify and install the latest release (resolves with its version). The background service is
+   *  restarted on the new version; call `restartEditor()` to reopen the editor on it too. */
+  installUpdate(onProgress?: (p: UpdateProgress) => void): Promise<string>;
+  restartEditor(): Promise<void>;
 }
 
 let instance: Backend | null = null;

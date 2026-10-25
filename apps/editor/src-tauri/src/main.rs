@@ -11,6 +11,7 @@ mod ini;
 mod kde;
 mod service;
 mod system;
+mod updates;
 mod window;
 
 use tauri::Manager;
@@ -47,6 +48,9 @@ fn main() {
             service::set_autostart,
             system::open_path,
             system::compile_macro,
+            updates::check_update,
+            updates::install_update,
+            updates::restart_editor,
         ])
         .run(tauri::generate_context!());
     if let Err(e) = result {

@@ -17,6 +17,7 @@ import { Header } from "@/shell/Header";
 import { LoadGate } from "@/shell/LoadGate";
 import { useDaemonEvent } from "@/state/daemon";
 import { editor, useEditor } from "@/state/store";
+import { autoCheck } from "@/state/updates";
 import { ConfirmHost, toast, Toaster, TooltipProvider } from "@/ui";
 
 const SimulatePanel = lazy(() => import("@/dev/SimulatePanel"));
@@ -38,6 +39,22 @@ function useGlobalHotkeys() {
   useHotkey("escape", () => (useEditor.getState().view.kind === "main" ? false : editor.showMain()), {
     description: "Back to the pad",
   });
+}
+
+function useUpdateNotice() {
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      const info = await autoCheck();
+      if (info)
+        toast({
+          title: `StreamPad ${info.latest} is available`,
+          description: "See what's new and update from Settings.",
+          action: { label: "View", onClick: () => editor.openSettings("about") },
+          duration: 12_000,
+        });
+    }, 4000);
+    return () => clearTimeout(timer);
+  }, []);
 }
 
 function useDaemonNotices() {
@@ -70,6 +87,7 @@ export function App() {
   useProfileAccent();
   useGlobalHotkeys();
   useDaemonNotices();
+  useUpdateNotice();
   return (
     <MotionConfig reducedMotion="user">
       <LucideProvider size={16} strokeWidth={1.75}>

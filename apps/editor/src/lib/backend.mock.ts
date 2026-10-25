@@ -211,6 +211,35 @@ export function createMockBackend(): Backend {
     async openPath(path) {
       console.info(`[mock] open ${path}`);
     },
-    appVersion: () => "0.1.0 (browser mock)",
+    appVersion: () => "2.0.0 (browser mock)",
+
+    async checkForUpdate() {
+      await wait(700);
+      return {
+        current: "2.0.0",
+        latest: "2.1.0",
+        available: true,
+        name: "StreamPad v2.1.0",
+        notes: "### What's new\n- Per-app profile switching\n- Smoother overlay animations\n\n### Fixes\n- Covers from links keep their crop",
+        url: "https://github.com/OMetaVR/Stream-Pad/releases",
+        publishedAt: new Date(Date.now() - 2 * 86_400_000).toISOString(),
+        method: "user" as const,
+        asset: "streampad-2.1.0-linux-x86_64.tar.gz",
+      };
+    },
+    async installUpdate(onProgress) {
+      const total = 10_500_000;
+      for (let r = 0; r <= total; r += 700_000) {
+        onProgress?.({ phase: "download", received: Math.min(r, total), total });
+        await wait(120);
+      }
+      onProgress?.({ phase: "install", received: 0, total: 0 });
+      await wait(1200);
+      onProgress?.({ phase: "done", received: 0, total: 0 });
+      return "2.1.0";
+    },
+    async restartEditor() {
+      location.reload();
+    },
   };
 }

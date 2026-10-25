@@ -4,7 +4,7 @@
 import { convertFileSrc, invoke, type InvokeArgs, type InvokeOptions } from "@tauri-apps/api/core";
 import { listen } from "@tauri-apps/api/event";
 import { open } from "@tauri-apps/plugin-dialog";
-import type { AppEntry, Backend, CompileResult, DaemonStatus, KdeShortcut } from "./backend";
+import type { AppEntry, Backend, CompileResult, DaemonStatus, KdeShortcut, UpdateInfo, UpdateProgress } from "./backend";
 import { DaemonChannel, toError } from "./daemon-channel";
 import type { Config, DaemonEvent, DeviceInfo, KeyId, Macro, OutputInfo, WindowInfo } from "./types";
 
@@ -129,5 +129,16 @@ export function createTauriBackend(): Backend {
     setAutostart: (on) => call<void>("set_autostart", { on }),
     openPath: (path) => call<void>("open_path", { path }),
     appVersion: () => boot.version,
+
+    checkForUpdate: () => call<UpdateInfo>("check_update"),
+    async installUpdate(onProgress) {
+      const unlisten = await listen<UpdateProgress>("streampad:update-progress", (e) => onProgress?.(e.payload));
+      try {
+        return await call<string>("install_update");
+      } finally {
+        unlisten();
+      }
+    },
+    restartEditor: () => call<void>("restart_editor"),
   };
 }
