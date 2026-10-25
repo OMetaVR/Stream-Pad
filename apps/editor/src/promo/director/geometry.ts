@@ -4,8 +4,10 @@ import { clamp, lerp, type Pt } from "../anim";
 
 export const W = 1280;
 export const H = 720;
-export const FPS = 30;
-export const FRAMES = 450;
+/** Timeline sampling rate. Frames are played back at 30 fps (promo/encode.sh), so sampling the 15 s
+ *  timeline at 40 fps gives a 20 s promo at 75 % speed without dropping smoothness. */
+export const FPS = 40;
+export const FRAMES = 600;
 
 /** The editor window: a 1280×800 app viewport under a slim title bar, scaled onto the 1280×720 screen. */
 export const APP_W = 1280;

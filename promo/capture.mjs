@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Capture the promo (apps/editor/promo.html) frame by frame, headless.
 //
-//   node promo/capture.mjs                       # all 450 frames → promo/build/frames/0000.png …
+//   node promo/capture.mjs                       # all 600 frames → promo/build/frames/0000.png …
 //   node promo/capture.mjs --from 60 --to 200 --step 5 [--out DIR] [--port 5190]
 //
 // Starts its own Vite dev server for apps/editor (strictPort) unless --url is given, opens promo.html at
@@ -26,7 +26,7 @@ const opt = (name, def) => {
 const flag = (name) => args.includes(`--${name}`);
 const port = Number(opt("port", "5190"));
 const from = Number(opt("from", "0"));
-const to = Number(opt("to", "449"));
+const to = Number(opt("to", "Infinity"));
 const step = Math.max(1, Number(opt("step", "1")));
 const outDir = path.resolve(opt("out", path.join(here, "build/frames")));
 const externalUrl = opt("url", null);

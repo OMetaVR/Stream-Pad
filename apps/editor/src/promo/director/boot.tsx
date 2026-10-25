@@ -1,6 +1,6 @@
 // Director boot: renders the promo and exposes the capture contract
-//   window.promo = { frames: 450, fps: 30, seek(frame): Promise<void> }
-// seek(n) puts the page in exactly the state for time n / 30 s (capture seeks forward only, so discrete UI
+//   window.promo = { frames: 600, fps: 40, seek(frame): Promise<void> }
+// seek(n) puts the page in exactly the state for time n / 40 s (capture seeks forward only, so discrete UI
 // steps are applied in order as their time passes) and resolves after layout, image decode and two rAFs.
 
 import "@fontsource-variable/inter";

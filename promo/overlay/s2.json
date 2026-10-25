@@ -1,15 +1,15 @@
 {
-  "fps": 30,
-  "frames": 126,
+  "fps": 40,
+  "frames": 168,
   "state": "audio.json",
   "events": [
-    { "frame": 9,   "type": "visible", "value": true },
-    { "frame": 39,  "type": "key", "key": "KP5", "pressed": true },
-    { "frame": 39,  "type": "toast", "text": "Play / Pause", "kind": "info", "durationMs": 1600 },
-    { "frame": 44,  "type": "key", "key": "KP5", "pressed": false },
-    { "frame": 63,  "type": "profile", "state": "apps.json", "direction": 1 },
-    { "frame": 87,  "type": "key", "key": "KP1", "pressed": true },
-    { "frame": 92,  "type": "key", "key": "KP1", "pressed": false },
-    { "frame": 111, "type": "visible", "value": false }
+    {"frame": 12, "type": "visible", "value": true},
+    {"frame": 52, "type": "key", "key": "KP5", "pressed": true},
+    {"frame": 52, "type": "toast", "text": "Play / Pause", "kind": "info", "durationMs": 1600},
+    {"frame": 59, "type": "key", "key": "KP5", "pressed": false},
+    {"frame": 84, "type": "profile", "state": "apps.json", "direction": 1},
+    {"frame": 116, "type": "key", "key": "KP1", "pressed": true},
+    {"frame": 123, "type": "key", "key": "KP1", "pressed": false},
+    {"frame": 148, "type": "visible", "value": false}
   ]
 }

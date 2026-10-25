@@ -10,7 +10,7 @@ sizes, fonts, colours and spacing are identical to the shipped app.
 | | |
 |---|---|
 | Canvas | 1280 × 720 (16:9), captured at deviceScaleFactor 1 |
-| Frame rate | 30 fps, 15.0 s → **450 frames** (frame `n` is time `n / 30` s) |
+| Frame rate | timeline sampled at 40 fps (600 frames), played back at 30 fps → 20 s at 75 % speed |
 | Loop | last frame must flow into frame 0 (both are the empty dark stage) |
 | Outputs | `promo/out/streampad.gif` (README, ≤ ~12 MB, 960 px wide), `streampad.mp4`, `streampad.webm` |
 | Determinism | everything is a pure function of the frame number — no wall-clock animation in captured pixels |

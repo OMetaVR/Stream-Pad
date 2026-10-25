@@ -20,7 +20,7 @@
 #   GIF_ENGINE  auto       auto = gifski when installed, else ffmpeg palettegen/paletteuse
 #                          (gifski | ffmpeg to force)
 #   FPS         30         frame rate of the input sequence
-#   EXPECT_FRAMES 450      refuse to run if the frame count differs (catches a half-finished render); 0 = off
+#   EXPECT_FRAMES 600      refuse to run if the frame count differs (catches a half-finished render); 0 = off
 #   MP4_CRF 18  WEBM_CRF 27  MP4_WIDTH/WEBM_WIDTH 1280 (0 = source width)
 #   POSTER_FRAME  frame number for poster.png (default: 327 = 10.9 s "Design every key"; middle if absent)
 #   SKIP        space separated subset of: gif mp4 webm poster contact
@@ -51,7 +51,7 @@ WEBM_WIDTH=${WEBM_WIDTH:-1280}
 NICE=${NICE:-10}
 MEM_KB=${MEM_KB:-16000000}
 SKIP=${SKIP:-}
-EXPECT_FRAMES=${EXPECT_FRAMES:-450}
+EXPECT_FRAMES=${EXPECT_FRAMES:-600}
 
 export PATH="$HOME/.cargo/bin:$HOME/.local/bin:$PATH"
 
