@@ -26,20 +26,34 @@ Everything you type outside macro mode passes through untouched.
 
 ## Install
 
-Requirements: Rust (1.85+), bun, CMake + Ninja, Qt 6 (Quick, QuickControls2, Svg, ShaderTools) with
-layer-shell-qt, and WebKitGTK 4.1. On Arch / EndeavourOS:
+Grab the latest build from [**Releases**](https://github.com/OMetaVR/Stream-Pad/releases/latest).
 
+**Arch / EndeavourOS / Manjaro** — the package (recommended):
 ```sh
-sudo pacman -S --needed rust bun cmake ninja qt6-declarative qt6-svg layer-shell-qt webkit2gtk-4.1
+sudo pacman -U streampad-2.0.0-1-x86_64.pkg.tar.zst
+systemctl --user enable --now streampad
+```
+
+**Arch-based, without root** — the prebuilt tarball installs to `~/.local` and starts the service:
+```sh
+tar xzf streampad-2.0.0-linux-x86_64.tar.gz
+cd streampad-2.0.0-linux-x86_64 && ./install.sh
+```
+
+**Any distro, from source** — needs Rust, bun, CMake + Ninja, Qt 6 (base, declarative, svg) with
+layer-shell-qt and KWindowSystem, GTK 3 and WebKitGTK 4.1:
+```sh
 make              # builds the daemon, overlay and editor
 make install      # installs to ~/.local and enables the user service
 systemctl --user start streampad
 ```
+You can also build the Arch package yourself with `packaging/arch/PKGBUILD` (`makepkg -si`).
 
-The daemon needs access to `/dev/input/event*` and `/dev/uinput`. Being in the `input` group is enough;
-otherwise `make install` prints how to install `packaging/udev/70-streampad.rules`.
+StreamPad needs access to `/dev/input/event*` and `/dev/uinput`. Being in the `input` group is enough;
+otherwise the installers explain how to add the included udev rule.
 
-Uninstall with `make uninstall` (your profiles in `~/.config/streampad` are kept).
+Uninstall: `sudo pacman -R streampad`, `~/.local/share/streampad/uninstall.sh` (tarball) or `make uninstall`.
+Your profiles in `~/.config/streampad` are kept.
 
 ## Using it
 
