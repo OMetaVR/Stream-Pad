@@ -43,9 +43,11 @@ if systemctl --user is-active --quiet streampad 2>/dev/null; then
 fi
 install -d "$prefix/bin"
 install -m755 "$payload"/bin/* "$prefix/bin/"
-rm -rf "$prefix/share/streampad"
-mkdir -p "$prefix/share"
-cp -r "$payload/share/streampad" "$prefix/share/"
+# PREFIX/share/streampad doubles as your data dir for a ~/.local install (uploaded covers in covers/, your
+# icons in icons/), so replace only what the release ships — never the directory itself.
+rm -rf "$prefix/share/streampad/icons/lucide" "$prefix/share/streampad/udev"
+mkdir -p "$prefix/share/streampad"
+cp -r "$payload/share/streampad/." "$prefix/share/streampad/"
 install -Dm644 "$payload/share/icons/hicolor/scalable/apps/io.github.ometavr.streampad.svg" \
     "$prefix/share/icons/hicolor/scalable/apps/io.github.ometavr.streampad.svg"
 desktop=$prefix/share/applications/io.github.ometavr.streampad.desktop

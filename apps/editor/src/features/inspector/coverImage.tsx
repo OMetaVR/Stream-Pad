@@ -1,6 +1,7 @@
 // Cover rendering shared by the numpad, the inspector and the crop dialog. Matches the overlay
 // (apps/overlay/qml/KeyCover.qml): no crop = centred cover fit; a crop's region fills the face.
 
+import { ImageOff } from "lucide-react";
 import { useLayoutEffect, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import { KEY_INFO, type CropRect, type KeyId } from "@/lib/types";
@@ -37,6 +38,7 @@ export function placement(crop: CropRect, iw: number, ih: number, fw: number, fh
 /** Fills its (positioned, sized) parent. */
 export function CoverImage({ src, crop, className }: { src: string; crop: CropRect | null; className?: string }) {
   const [natural, setNatural] = useState<{ w: number; h: number } | null>(null);
+  const [failed, setFailed] = useState<string | null>(null);
   const [box, setBox] = useState<{ w: number; h: number } | null>(null);
   const host = useRef<HTMLDivElement>(null);
   useLayoutEffect(() => {
@@ -50,6 +52,13 @@ export function CoverImage({ src, crop, className }: { src: string; crop: CropRe
     return () => ro.disconnect();
   }, [crop]);
   const cropped = crop && natural && box ? placement(crop, natural.w, natural.h, box.w, box.h) : null;
+  if (failed === src) {
+    return (
+      <div className={cn("absolute inset-0 flex flex-col items-center justify-center gap-1 bg-keycap text-faint", className)} title="This image file is missing — choose it again">
+        <ImageOff size={18} />
+      </div>
+    );
+  }
   return (
     <div
       className={cn("absolute inset-0 overflow-hidden", className)}
@@ -60,6 +69,7 @@ export function CoverImage({ src, crop, className }: { src: string; crop: CropRe
         alt=""
         draggable={false}
         onLoad={(e) => setNatural({ w: e.currentTarget.naturalWidth, h: e.currentTarget.naturalHeight })}
+        onError={() => setFailed(src)}
         className={cn("absolute max-w-none select-none", !cropped && "inset-0 size-full object-cover")}
         style={cropped ?? undefined}
       />

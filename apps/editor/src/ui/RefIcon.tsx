@@ -27,7 +27,7 @@ export function RefIcon({ iconRef, size = 16, className, fallback: Fallback = Im
     return <Icon size={size} className={className} {...a11y} />;
   }
   const url = getBackend().assetUrl(iconRef);
-  if (!url || failed === iconRef) return <Fallback size={size} className={cn("text-faint", className)} {...a11y} />;
+  if (!url || failed === url) return <Fallback size={size} className={cn("text-faint", className)} {...a11y} />;
   return (
     <img
       src={url}
@@ -35,7 +35,7 @@ export function RefIcon({ iconRef, size = 16, className, fallback: Fallback = Im
       height={size}
       alt={title ?? ""}
       draggable={false}
-      onError={() => setFailed(iconRef)}
+      onError={() => setFailed(url)}
       className={cn("shrink-0 object-contain", className)}
       style={{ width: size, height: size }}
     />

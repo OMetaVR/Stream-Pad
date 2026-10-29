@@ -30,6 +30,15 @@ export function createTauriBackend(): Backend {
   const boot = bootInfo();
   const channel = new DaemonChannel();
   const urls = new Map<string, string | null>();
+  // Imported images are content-addressed, so re-importing an image that went missing yields the same ref and
+  // path. The webview caches the failed load per URL, so each import gets a fresh URL (`?v=`; the asset
+  // protocol ignores the query).
+  const versions = new Map<string, number>();
+  const imported = (ref: string) => {
+    versions.set(ref, (versions.get(ref) ?? 0) + 1);
+    urls.delete(ref);
+    return ref;
+  };
 
   void (async () => {
     let sawStatusEvent = false;
@@ -62,7 +71,8 @@ export function createTauriBackend(): Backend {
     const cached = urls.get(ref);
     if (cached !== undefined) return cached;
     const path = resolvePath(ref);
-    const url = path ? convertFileSrc(path) : null;
+    const v = versions.get(ref);
+    const url = path ? convertFileSrc(path) + (v ? `?v=${v}` : "") : null;
     urls.set(ref, url);
     return url;
   }
@@ -87,12 +97,12 @@ export function createTauriBackend(): Backend {
       });
       return typeof picked === "string" ? picked : null;
     },
-    importCover: (absPath, kind = "cover") => call<string>("import_cover", { path: absPath, kind }),
+    importCover: (absPath, kind = "cover") => call<string>("import_cover", { path: absPath, kind }).then(imported),
     async importCoverFile(file, kind = "cover") {
       const bytes = new Uint8Array(await file.arrayBuffer());
-      return call<string>("import_cover_bytes", bytes, { headers: { "x-file-name": encodeURIComponent(file.name), "x-asset-kind": kind } });
+      return call<string>("import_cover_bytes", bytes, { headers: { "x-file-name": encodeURIComponent(file.name), "x-asset-kind": kind } }).then(imported);
     },
-    importImageUrl: (url, kind = "cover") => call<string>("import_image_url", { url, kind }),
+    importImageUrl: (url, kind = "cover") => call<string>("import_image_url", { url, kind }).then(imported),
     assetUrl,
 
     async listApps() {
