@@ -184,6 +184,7 @@ export interface DeviceInfo {
   phys: string | null;
   hasNumpad: boolean;
   eligible: boolean;
+  virtual?: boolean;
   grabbed: boolean;
   error: string | null;
 }

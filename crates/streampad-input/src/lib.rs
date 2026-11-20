@@ -44,10 +44,11 @@ pub use discovery::OWN_DEVICE_PREFIX;
 pub use mirror::MIRROR_NAME_PREFIX;
 pub use output::{KeyOutput, VIRTUAL_KEYBOARD_NAME};
 
-/// Which physical devices to grab.
+/// Which input devices to grab.
 #[derive(Debug, Clone, PartialEq, Eq, Default)]
 pub struct DeviceFilter {
-    /// `true` = grab every eligible keyboard except `exclude`; `false` = grab only `include`.
+    /// `true` = grab every eligible physical keyboard except `exclude` (plus virtual keyboards in `include`);
+    /// `false` = grab only `include`.
     pub auto: bool,
     /// Device ids (`"<vendor hex4>:<product hex4>:<name>"`).
     pub include: Vec<String>,

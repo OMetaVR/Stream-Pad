@@ -21,9 +21,16 @@ fn main() {
         return;
     }
     let yes_no = |flag: bool| if flag { "yes" } else { "no" };
-    println!("{:<20} {:<9} {:<7} ID", "DEVICE", "ELIGIBLE", "NUMPAD");
+    println!("{:<20} {:<9} {:<7} {:<8} ID", "DEVICE", "ELIGIBLE", "NUMPAD", "VIRTUAL");
     for device in &devices {
-        println!("{:<20} {:<9} {:<7} {}", device.path, yes_no(device.eligible), yes_no(device.has_numpad), device.id);
+        println!(
+            "{:<20} {:<9} {:<7} {:<8} {}",
+            device.path,
+            yes_no(device.eligible),
+            yes_no(device.has_numpad),
+            yes_no(device.is_virtual),
+            device.id
+        );
         if let Some(phys) = &device.phys {
             println!("{:<20} phys {phys}", "");
         }

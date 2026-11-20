@@ -95,11 +95,18 @@ pub fn list_devices(as_json: bool) -> anyhow::Result<ExitCode> {
         return Ok(ExitCode::SUCCESS);
     }
     let path_width = devices.iter().map(|d| d.path.len()).max().unwrap_or(4).max(4);
-    println!("{:<path_width$}  {:<8}  {:<6}  ID", "PATH", "ELIGIBLE", "NUMPAD");
+    println!("{:<path_width$}  {:<8}  {:<6}  {:<7}  ID", "PATH", "ELIGIBLE", "NUMPAD", "VIRTUAL");
     for d in &devices {
         let yes = |b: bool| if b { "yes" } else { "no" };
         let note = d.error.as_deref().map(|e| format!("  ({e})")).unwrap_or_default();
-        println!("{:<path_width$}  {:<8}  {:<6}  {}{note}", d.path, yes(d.eligible), yes(d.has_numpad), d.id);
+        println!(
+            "{:<path_width$}  {:<8}  {:<6}  {:<7}  {}{note}",
+            d.path,
+            yes(d.eligible),
+            yes(d.has_numpad),
+            yes(d.is_virtual),
+            d.id
+        );
     }
     Ok(ExitCode::SUCCESS)
 }

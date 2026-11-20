@@ -150,9 +150,9 @@ interface Settings {
 interface GlobalBinding { tap: GlobalAction; hold: GlobalAction | null }
 
 interface DeviceSettings {
-  mode: "auto" | "manual";  // auto: grab every eligible keyboard (has numpad keys or the toggle key, has EV_REP)
-  include: string[];        // manual mode: device ids to grab
-  exclude: string[];        // auto mode: device ids never to grab
+  mode: "auto" | "manual";  // auto: grab every eligible physical keyboard (has numpad keys or the toggle key, has EV_REP)
+  include: string[];        // manual mode: device ids to grab; auto mode: virtual device ids opted in
+  exclude: string[];        // auto mode: physical device ids never to grab
 }
 // device id = "<vendor hex4>:<product hex4>:<name>"  e.g. "1532:023f:Razer Razer Cynosa Lite"
 // (phys suffix is NOT part of the id, so ids survive replugging into another port)
@@ -376,7 +376,7 @@ interface RenderKey {
   global: GlobalAction | null;   // when kind == "global" (tap action)
   legend: { main: string; sub: string | null };
 }
-interface DeviceInfo { id: string; name: string; path: string; phys: string | null; hasNumpad: boolean; eligible: boolean; grabbed: boolean; error: string | null }
+interface DeviceInfo { id: string; name: string; path: string; phys: string | null; hasNumpad: boolean; eligible: boolean; virtual: boolean; grabbed: boolean; error: string | null }
 interface OutputInfo { name: string; x: number; y: number; width: number; height: number; scale: number; primary: boolean; model: string | null }
 interface WindowInfo { id: string; title: string; appId: string; resourceClass: string; desktopFile: string; pid: number; output: string | null; active: boolean }
 ```

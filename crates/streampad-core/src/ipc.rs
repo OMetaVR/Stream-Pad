@@ -148,6 +148,10 @@ pub struct DeviceInfo {
     pub phys: Option<String>,
     pub has_numpad: bool,
     pub eligible: bool,
+    /// True for software/virtual input devices (uinput or `BUS_VIRTUAL`). Skipped in auto mode unless
+    /// explicitly included.
+    #[serde(default, rename = "virtual")]
+    pub is_virtual: bool,
     pub grabbed: bool,
     pub error: Option<String>,
 }

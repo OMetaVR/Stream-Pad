@@ -209,7 +209,7 @@ fn hotplugged_keyboards_are_grabbed_and_released() {
     assert!(wait_event(&events, SETTLE, grabbed).is_some(), "a hotplugged keyboard must be grabbed");
     let info = engine.devices().into_iter().find(|d| d.name == name).expect("listed");
     assert_eq!(info.id, format!("1209:5350:{name}"));
-    assert!(info.has_numpad && info.eligible && info.error.is_none());
+    assert!(info.has_numpad && info.eligible && info.is_virtual && info.error.is_none());
     assert_eq!(info.path, keyboard.devnode().to_string_lossy());
 
     let mirror = Grabbed::open(&find_node(&mirror_name(&name)));

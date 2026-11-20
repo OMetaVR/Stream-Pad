@@ -171,20 +171,22 @@ export function DevicesSection() {
   useEffect(() => void refresh(), []);
   const devices = live ?? listed ?? [];
   const auto = devSettings.mode === "auto";
-  const enabled = (id: string) => (auto ? !devSettings.exclude.includes(id) : devSettings.include.includes(id));
-  const toggle = (id: string, on: boolean) =>
-    editor.updateSettings((d) => {
-      const list = auto ? d.devices.exclude : d.devices.include;
-      const want = auto ? !on : on;
-      const i = list.indexOf(id);
-      if (want && i < 0) list.push(id);
+  const enabled = (d: DeviceInfo) =>
+    auto && !d.virtual ? !devSettings.exclude.includes(d.id) : devSettings.include.includes(d.id);
+  const toggle = (d: DeviceInfo, on: boolean) =>
+    editor.updateSettings((cfg) => {
+      const useExclude = auto && !d.virtual;
+      const list = useExclude ? cfg.devices.exclude : cfg.devices.include;
+      const want = useExclude ? !on : on;
+      const i = list.indexOf(d.id);
+      if (want && i < 0) list.push(d.id);
       if (!want && i >= 0) list.splice(i, 1);
     }, { coalesce: false });
 
   return (
     <Section
       title="Detected keyboards"
-      description="StreamPad listens to these keyboards. Everything you type passes through unchanged unless macro mode is on."
+      description="StreamPad listens to these keyboards. Everything you type passes through unchanged unless macro mode is on. Virtual keyboards are skipped automatically unless you turn them on."
       actions={
         <Button size="sm" variant="ghost" icon={RefreshCw} loading={loading} onClick={() => void refresh()}>
           Refresh
@@ -208,6 +210,7 @@ export function DevicesSection() {
                 <div className="flex items-center gap-2">
                   <span className="truncate text-base font-medium">{d.name}</span>
                   {d.hasNumpad && <Badge>Numpad</Badge>}
+                  {d.virtual && <Badge>Virtual</Badge>}
                   {d.grabbed ? <Badge variant="success" dot>Active</Badge> : d.error ? <Badge variant="danger">Error</Badge> : null}
                 </div>
                 <div className="truncate font-code text-xs text-faint">
@@ -215,7 +218,7 @@ export function DevicesSection() {
                 </div>
                 {d.error && <div className="text-sm text-danger">{d.error}</div>}
               </div>
-              <Switch checked={d.eligible && enabled(d.id)} disabled={!d.eligible} onCheckedChange={(v) => toggle(d.id, v)} aria-label={`Use ${d.name}`} />
+              <Switch checked={d.eligible && enabled(d)} disabled={!d.eligible} onCheckedChange={(v) => toggle(d, v)} aria-label={`Use ${d.name}`} />
             </div>
           ))}
         </Card>

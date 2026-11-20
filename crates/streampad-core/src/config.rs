@@ -132,9 +132,9 @@ pub enum DeviceMode {
 #[serde(rename_all = "camelCase", default)]
 pub struct DeviceSettings {
     pub mode: DeviceMode,
-    /// Manual mode: device ids to grab.
+    /// Manual mode: device ids to grab. Auto mode: virtual device ids explicitly opted in.
     pub include: Vec<String>,
-    /// Auto mode: device ids never to grab.
+    /// Auto mode: physical device ids never to grab.
     pub exclude: Vec<String>,
 }
 

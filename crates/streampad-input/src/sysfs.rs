@@ -4,6 +4,7 @@
 
 use crate::bits::Bits;
 use crate::caps::Capabilities;
+use crate::sys::BUS_VIRTUAL;
 use std::fs;
 use std::path::Path;
 
@@ -12,8 +13,26 @@ pub(crate) struct SysfsDevice {
     pub phys: Option<String>,
     pub vendor: u16,
     pub product: u16,
+    pub is_virtual: bool,
     /// Event types and key codes only.
     pub caps: Capabilities,
+}
+
+/// True when a canonical `/sys/class/input/eventN/device` path belongs to `/dev/uinput`.
+///
+/// Only `/sys/devices/virtual/input` matches uinput; BLE HID keyboards live under
+/// `/sys/devices/virtual/misc/uhid/...` and remain classified as physical devices.
+pub(crate) fn is_virtual_sysfs_path(canonical: &Path) -> bool {
+    canonical.starts_with("/sys/devices/virtual/input")
+}
+
+/// True when `/sys/class/input/<eventN>/device` resolves under `/sys/devices/virtual/input`.
+pub(crate) fn is_virtual_node(node: &Path) -> bool {
+    let Some(file_name) = node.file_name() else {
+        return false;
+    };
+    let dir = Path::new("/sys/class/input").join(file_name).join("device");
+    fs::canonicalize(&dir).ok().is_some_and(|path| is_virtual_sysfs_path(&path))
 }
 
 pub(crate) fn read(node: &Path) -> Option<SysfsDevice> {
@@ -25,11 +44,15 @@ pub(crate) fn read(node: &Path) -> Option<SysfsDevice> {
         keys: parse_bitmap(&read("capabilities/key")?)?,
         ..Capabilities::default()
     };
+    let bustype = hex("id/bustype")?;
+    let is_virtual =
+        bustype == BUS_VIRTUAL || fs::canonicalize(&dir).ok().is_some_and(|path| is_virtual_sysfs_path(&path));
     Some(SysfsDevice {
         name: read("name")?,
         phys: read("phys").filter(|phys| !phys.is_empty()),
         vendor: hex("id/vendor")?,
         product: hex("id/product")?,
+        is_virtual,
         caps,
     })
 }
@@ -62,5 +85,18 @@ mod tests {
         assert!(bits.contains(3 * 64 + 48), "highest word is the most significant");
         assert_eq!(parse_bitmap("0").expect("valid").iter().count(), 0);
         assert!(parse_bitmap("zz").is_none());
+    }
+
+    #[test]
+    fn distinguishes_uinput_from_physical_and_ble_uhid_paths() {
+        assert!(is_virtual_sysfs_path(Path::new("/sys/devices/virtual/input/input29")));
+        assert!(
+            !is_virtual_sysfs_path(Path::new("/sys/devices/virtual/misc/uhid/0005:1234:5678.0001/input/input12")),
+            "BLE HID keyboards via uhid are physical"
+        );
+        assert!(!is_virtual_sysfs_path(Path::new(
+            "/sys/devices/pci0000:00/0000:00:01.3/usb1/1-2/1-2:1.0/0003:1532:023F.0001/input/input2"
+        )));
+        assert!(!is_virtual_sysfs_path(Path::new("/sys/devices/platform/i8042/serio0/input/input3")));
     }
 }

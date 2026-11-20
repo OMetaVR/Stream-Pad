@@ -3,6 +3,7 @@
 use crate::DeviceFilter;
 use crate::caps::Capabilities;
 use crate::evdev::{EvdevDevice, is_vanished};
+use crate::sys::BUS_VIRTUAL;
 use crate::sysfs::{self, SysfsDevice};
 use std::fs;
 use std::io;
@@ -74,6 +75,8 @@ pub(crate) fn probe(path: &Path, toggle_key: u16) -> Probe {
     if name.starts_with(OWN_DEVICE_PREFIX) || !caps.is_keyboard_like(toggle_key) {
         return Probe::Ignored;
     }
+    let is_virtual = input_id.bustype == BUS_VIRTUAL
+        || summary.as_ref().map_or_else(|| sysfs::is_virtual_node(path), |s| s.is_virtual);
     let info = DeviceInfo {
         id: device_id(input_id.vendor, input_id.product, &name),
         name,
@@ -81,6 +84,7 @@ pub(crate) fn probe(path: &Path, toggle_key: u16) -> Probe {
         phys: device.phys(),
         has_numpad: caps.has_numpad(),
         eligible: caps.is_eligible(toggle_key),
+        is_virtual,
         grabbed: false,
         error: None,
     };
@@ -95,6 +99,7 @@ fn sysfs_info(summary: &SysfsDevice, path: &Path, toggle_key: u16) -> DeviceInfo
         phys: summary.phys.clone(),
         has_numpad: summary.caps.has_numpad(),
         eligible: summary.caps.is_eligible(toggle_key),
+        is_virtual: summary.is_virtual,
         grabbed: false,
         error: None,
     }
@@ -115,11 +120,15 @@ impl DeviceFilter {
     }
 
     /// Whether the device should be grabbed.
+    ///
+    /// In auto mode, physical keyboards are grabbed unless excluded; virtual keyboards (uinput or
+    /// `BUS_VIRTUAL`) are skipped by default to avoid grabbing software relays and remappers, and can be
+    /// opted in via `include`.
     pub(crate) fn selects(&self, info: &DeviceInfo) -> bool {
         let wanted = if self.only.is_some() {
             true
         } else if self.auto {
-            !self.exclude.contains(&info.id)
+            if info.is_virtual { self.include.contains(&info.id) } else { !self.exclude.contains(&info.id) }
         } else {
             self.include.contains(&info.id)
         };
@@ -153,6 +162,7 @@ mod tests {
             phys: None,
             has_numpad: true,
             eligible,
+            is_virtual: false,
             grabbed: false,
             error: None,
         }
@@ -174,6 +184,21 @@ mod tests {
         assert!(!filter.selects(&info("Keyboard", "/dev/input/event3", false)), "never grab ineligible devices");
         filter.exclude.push(kb.id.clone());
         assert!(!filter.selects(&kb) && filter.considers(&kb));
+    }
+
+    #[test]
+    fn auto_mode_skips_virtual_devices_unless_explicitly_included() {
+        let mut vkb = info("Virtual Relay", "/dev/input/event29", true);
+        vkb.id = device_id(0, 0, "Virtual Relay");
+        vkb.is_virtual = true;
+        let mut filter = DeviceFilter { auto: true, ..Default::default() };
+        assert!(filter.considers(&vkb), "virtual keyboards stay visible in device lists");
+        assert!(!filter.selects(&vkb), "auto mode must not grab virtual keyboards by default");
+        filter.include.push(vkb.id.clone());
+        assert!(filter.selects(&vkb), "auto mode grabs a virtual keyboard when opted in via include");
+
+        let only = DeviceFilter { auto: true, only: Some(vkb.name.clone()), ..Default::default() };
+        assert!(only.selects(&vkb), "--only-device overrides virtual filtering");
     }
 
     #[test]
