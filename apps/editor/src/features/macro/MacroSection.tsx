@@ -8,9 +8,9 @@ import { AlertCircle, ChevronDown, Code, GripVertical, MoreHorizontal, Play, Plu
 import { useEffect, useMemo, useState } from "react";
 import { getBackend } from "@/lib/backend";
 import { cn } from "@/lib/cn";
-import type { Binding, GraphNode, KeyId, Macro } from "@/lib/types";
+import type { Binding, GraphNode, KeyId, Macro, ProfileHook } from "@/lib/types";
 import { onDaemonEvent, useDaemon, useDaemonEvent, useRunLog, type DaemonEventData } from "@/state/daemon";
-import { editor, useRequest } from "@/state/store";
+import { editor, useRequest, type MacroTarget } from "@/state/store";
 import {
   Button,
   Checkbox,
@@ -86,7 +86,7 @@ export function MacroSection({ profileId, keyId, binding, onChange }: MacroSecti
     <section className="flex flex-col gap-3" aria-label="Action">
       <div className="flex items-center justify-between">
         <h3 className="text-sm font-medium text-muted">Action</h3>
-        {macro && <MacroMenu profileId={profileId} keyId={keyId} macro={macro} onClear={() => onChange({ ...binding, macro: null })} />}
+        {macro && <MacroMenu target={{ kind: "key", profileId, keyId }} macro={macro} onClear={() => onChange({ ...binding, macro: null })} />}
       </div>
 
       {!macro && (
@@ -175,7 +175,101 @@ export function MacroSection({ profileId, keyId, binding, onChange }: MacroSecti
   );
 }
 
-function MacroMenu({ profileId, keyId, macro, onClear }: { profileId: string; keyId: KeyId; macro: Macro; onClear(): void }) {
+export interface ProfileHookSectionProps {
+  profileId: string;
+  hook: ProfileHook;
+  title: string;
+  hint: string;
+  macro: Macro | null | undefined;
+}
+
+export function ProfileHookSection({ profileId, hook, title, hint, macro }: ProfileHookSectionProps) {
+  const ctx = useNodeContext();
+  const [picker, setPicker] = useState<null | "first" | "append">(null);
+  const [openStep, setOpenStep] = useState<string | null>(null);
+  const target: MacroTarget = { kind: "hook", profileId, hook };
+
+  const setMacro = (next: Macro | null, coalesce?: string) =>
+    editor.setProfileHook(profileId, hook, next, { coalesce: coalesce ?? false });
+
+  const addAction = (kind: string) => {
+    const node = newNode(kind);
+    const graph: Graph = macro?.type === "graph" ? macro : emptyGraph();
+    const current = chainFrom(graph, "trigger.press") ?? [];
+    setMacro(setChain(graph, "trigger.press", [...current, node]));
+    setOpenStep(node.id);
+  };
+
+  return (
+    <section className="flex flex-col gap-2.5" aria-label={title}>
+      <div className="flex items-center justify-between gap-2">
+        <div className="min-w-0">
+          <h3 className="text-sm font-medium text-fg">{title}</h3>
+          <p className="text-xs text-muted">{hint}</p>
+        </div>
+        {macro && <MacroMenu target={target} macro={macro} onClear={() => setMacro(null)} />}
+      </div>
+
+      {!macro && (
+        <div className="flex items-center gap-2">
+          <Button size="sm" variant="ghost" icon={Plus} onClick={() => setPicker("first")}>
+            Add action
+          </Button>
+          <Button size="sm" variant="ghost" icon={Code} onClick={() => editor.openHookScript(profileId, hook)}>
+            Write script
+          </Button>
+        </div>
+      )}
+
+      {macro?.type === "graph" && isLinear(macro) && (
+        <StepList
+          graph={macro}
+          chain="trigger.press"
+          ctx={ctx}
+          openStep={openStep}
+          setOpenStep={setOpenStep}
+          onGraph={setMacro}
+          onAdd={() => setPicker("append")}
+        />
+      )}
+
+      {macro?.type === "graph" && !isLinear(macro) && <FlowSummary graph={macro} ctx={ctx} onOpen={() => editor.openHookFlow(profileId, hook)} />}
+
+      {macro?.type === "script" && (
+        <button
+          type="button"
+          onClick={() => editor.openHookScript(profileId, hook)}
+          className="group overflow-hidden rounded-lg border border-line bg-raised text-left transition-quick hover:border-line-strong"
+        >
+          <pre className="max-h-28 overflow-hidden px-3 py-2 font-code text-xs leading-relaxed text-muted">{macro.source.trim() || "// empty script"}</pre>
+          <div className="flex items-center gap-2 border-t border-line px-3 py-2 text-sm text-fg">
+            <Code size={14} className="text-accent-text" /> Edit script
+          </div>
+        </button>
+      )}
+
+      {macro && <TestRow macro={macro} keyId={null} />}
+
+      <ActionPicker
+        open={picker !== null}
+        onOpenChange={(o) => !o && setPicker(null)}
+        linearOnly={macro?.type === "graph" ? isLinear(macro) : true}
+        title={picker === "append" ? "Add a step" : `Choose an action (${title.toLowerCase()})`}
+        onPick={(kind) => {
+          if (!picker) return;
+          if (["flow.if", "flow.repeat", "flow.stop"].includes(kind)) {
+            addAction(kind);
+            editor.openHookFlow(profileId, hook);
+            return;
+          }
+          addAction(kind);
+        }}
+      />
+    </section>
+  );
+}
+
+function MacroMenu({ target, macro, onClear }: { target: MacroTarget; macro: Macro; onClear(): void }) {
   const toScript = async () => {
     if (macro.type !== "graph") return;
     const res = await getBackend().compileMacro(macro);
@@ -189,8 +283,12 @@ function MacroMenu({ profileId, keyId, macro, onClear }: { profileId: string; ke
       confirmLabel: "Convert",
     });
     if (!ok) return;
-    editor.updateBinding(profileId, keyId, (b) => void (b.macro = { type: "script", source: res.code }), { coalesce: false });
-    editor.openScript(profileId, keyId);
+    if (target.kind === "key") {
+      editor.updateBinding(target.profileId, target.keyId, (b) => void (b.macro = { type: "script", source: res.code }), { coalesce: false });
+    } else {
+      editor.setProfileHook(target.profileId, target.hook, { type: "script", source: res.code }, { coalesce: false });
+    }
+    editor.openTargetScript(target);
   };
   return (
     <DropdownMenu>
@@ -199,7 +297,7 @@ function MacroMenu({ profileId, keyId, macro, onClear }: { profileId: string; ke
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
         {macro.type === "graph" && (
-          <DropdownMenuItem icon={Workflow} onSelect={() => editor.openFlow(profileId, keyId)}>
+          <DropdownMenuItem icon={Workflow} onSelect={() => editor.openTargetFlow(target)}>
             Open flow editor
           </DropdownMenuItem>
         )}
@@ -208,7 +306,7 @@ function MacroMenu({ profileId, keyId, macro, onClear }: { profileId: string; ke
             Convert to script…
           </DropdownMenuItem>
         ) : (
-          <DropdownMenuItem icon={Code} onSelect={() => editor.openScript(profileId, keyId)}>
+          <DropdownMenuItem icon={Code} onSelect={() => editor.openTargetScript(target)}>
             Edit script
           </DropdownMenuItem>
         )}

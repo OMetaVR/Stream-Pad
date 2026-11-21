@@ -1,7 +1,7 @@
 // The hero: a faithful numpad for the selected profile. Click / arrow keys select, Enter picks an action,
 // drop images for covers, drag keys onto keys to swap (Alt = copy), right-click for more.
 
-import { ClipboardPaste, Copy, Eye, ImagePlus, ImageOff, Lock, MousePointerClick, Palette, Scissors, Trash2 } from "lucide-react";
+import { ClipboardPaste, Copy, Eye, ImagePlus, ImageOff, Lock, MousePointerClick, Palette, Scissors, SlidersHorizontal, Trash2 } from "lucide-react";
 import { useEffect, useLayoutEffect, useRef, useState } from "react";
 import { getBackend } from "@/lib/backend";
 import { cn } from "@/lib/cn";
@@ -290,6 +290,16 @@ function Toolbar({ profileId }: { profileId: string }) {
         </PopoverContent>
       </Popover>
       <div className="flex-1" />
+      <Button
+        size="sm"
+        variant="ghost"
+        icon={SlidersHorizontal}
+        title="Configure this profile's on-enter/on-leave actions and overlay visibility"
+        onClick={() => editor.selectKey(null)}
+      >
+        Profile actions
+        {(profile.hideOverlay || profile.onEnter || profile.onLeave) && <span className="size-1.5 rounded-full bg-accent" />}
+      </Button>
       <Button
         size="sm"
         variant={learn ? "primary" : "ghost"}

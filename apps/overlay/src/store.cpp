@@ -65,6 +65,7 @@ QVariantMap normalizeProfile(const QJsonObject &profile)
         {u"id"_s, profile.value(u"id").toString()},
         {u"name"_s, profile.value(u"name").toString().trimmed()},
         {u"iconId"_s, iconId(profile.value(u"icon"))},
+        {u"hideOverlay"_s, profile.value(u"hideOverlay").toBool()},
         {u"keys"_s, normalizedKeys},
     };
 }
@@ -164,7 +165,8 @@ void OverlayStore::applyState(const QJsonObject &state)
     }
 
     // Last, so geometry and content are current by the time the window is mapped.
-    setStateVisible(overlay.value(u"visible").toBool());
+    const bool hiddenByProfile = profile.value(u"hideOverlay"_s).toBool() && !overlay.value(u"preview").toBool();
+    setStateVisible(overlay.value(u"visible").toBool() && !hiddenByProfile);
 }
 
 void OverlayStore::applyEvent(const QString &event, const QJsonObject &data)

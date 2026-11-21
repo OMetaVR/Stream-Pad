@@ -91,11 +91,16 @@ export type IconRef = string;
 /** Absolute path, or relative to $XDG_DATA_HOME/streampad/ (e.g. "covers/ab12.gif"). */
 export type AssetRef = string;
 
+export type ProfileHook = "onEnter" | "onLeave";
+
 export interface Profile {
   id: string;
   name: string;
   color: string | null;
   icon: IconRef | null;
+  hideOverlay?: boolean;
+  onEnter?: Macro | null;
+  onLeave?: Macro | null;
   keys: Partial<Record<KeyId, Binding>>;
 }
 
@@ -155,7 +160,7 @@ export interface Config {
 // ---------------------------------------------------------------------------------------------------------
 // IPC
 
-export interface ProfileSummary { id: string; name: string; color: string | null; icon: string | null }
+export interface ProfileSummary { id: string; name: string; color: string | null; icon: string | null; hideOverlay?: boolean }
 
 export interface RenderKey {
   label: string;
@@ -174,6 +179,7 @@ export interface RenderProfile {
   name: string;
   color: string | null;
   icon: string | null;
+  hideOverlay?: boolean;
   keys: Record<KeyId, RenderKey>;
 }
 

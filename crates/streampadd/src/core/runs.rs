@@ -14,9 +14,30 @@ pub struct BindingRef {
     pub key: KeyId,
 }
 
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+pub enum ProfileHook {
+    Enter,
+    Leave,
+}
+
+impl ProfileHook {
+    pub fn label(self) -> &'static str {
+        match self {
+            ProfileHook::Enter => "on enter",
+            ProfileHook::Leave => "on leave",
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq, Eq, Hash)]
+pub enum RunOrigin {
+    Binding(BindingRef),
+    ProfileHook { profile_id: String, hook: ProfileHook },
+}
+
 pub struct RunEntry {
     pub key: Option<KeyId>,
-    pub origin: Option<BindingRef>,
+    pub origin: Option<RunOrigin>,
     /// Human name for error toasts ("Game Mode", "Numpad 4", "Test run").
     pub title: String,
     control: Box<dyn RunControl>,
@@ -64,7 +85,7 @@ impl RunRegistry {
         &mut self,
         id: u64,
         key: Option<KeyId>,
-        origin: Option<BindingRef>,
+        origin: Option<RunOrigin>,
         title: String,
         control: Box<dyn RunControl>,
     ) {
@@ -73,7 +94,19 @@ impl RunRegistry {
 
     /// Runs of `origin` that are not already being cancelled.
     fn active_for<'a>(&'a self, origin: &'a BindingRef) -> impl Iterator<Item = u64> + 'a {
-        self.runs.iter().filter(move |(_, r)| !r.cancelling && r.origin.as_ref() == Some(origin)).map(|(id, _)| *id)
+        self.runs
+            .iter()
+            .filter(move |(_, r)| !r.cancelling && matches!(&r.origin, Some(RunOrigin::Binding(b)) if b == origin))
+            .map(|(id, _)| *id)
+    }
+
+    /// Active profile lifecycle hook runs for `profile_id` (both enter and leave).
+    pub fn active_profile_hooks(&self, profile_id: &str) -> Vec<u64> {
+        self.runs
+            .iter()
+            .filter(|(_, r)| !r.cancelling && matches!(&r.origin, Some(RunOrigin::ProfileHook { profile_id: id, .. }) if id == profile_id))
+            .map(|(id, _)| *id)
+            .collect()
     }
 
     pub fn cancel(&mut self, id: u64) -> bool {

@@ -7,19 +7,18 @@ import { useMemo, useRef, useState } from "react";
 import { cn } from "@/lib/cn";
 import type { KeyId } from "@/lib/types";
 import { clearLogs, useDaemon } from "@/state/daemon";
-import { useBinding } from "@/state/selectors";
-import { editor } from "@/state/store";
+import { useMacroForTarget } from "@/state/selectors";
+import { editor, type MacroTarget } from "@/state/store";
 import { Button, EmptyState, Input, ScrollArea, Tabs, TabsContent, TabsList, TabsTrigger } from "@/ui";
 import { API, SNIPPETS } from "./api";
 import { CodeEditor, syntaxError } from "./CodeEditor";
 import { TestRow } from "./MacroSection";
 
 export interface ScriptEditorViewProps {
-  profileId: string;
-  keyId: KeyId;
+  target: MacroTarget;
 }
 
-const STARTER = `// Runs when the key is pressed. The whole StreamPad API is available — see the reference on the right.
+const KEY_STARTER = `// Runs when the key is pressed. The whole StreamPad API is available — see the reference on the right.
 // Example: different shortcut per focused app.
 if (window.isActive("firefox, chromium")) {
   press("ctrl+t");
@@ -28,9 +27,13 @@ if (window.isActive("firefox, chromium")) {
 }
 `;
 
-export function ScriptEditorView({ profileId, keyId }: ScriptEditorViewProps) {
-  const binding = useBinding(profileId, keyId);
-  const macro = binding?.macro;
+const HOOK_STARTER = (hook: "onEnter" | "onLeave") =>
+  hook === "onEnter"
+    ? `// Runs when entering this profile in macro mode (or turning macro mode on).\n// Example: run("my-companion-app --show");\n`
+    : `// Runs when leaving this profile in macro mode (or turning macro mode off).\n// Example: run("my-companion-app --hide");\n`;
+
+export function ScriptEditorView({ target }: ScriptEditorViewProps) {
+  const macro = useMacroForTarget(target);
   const view = useRef<EditorView | null>(null);
 
   if (macro && macro.type !== "script") {
@@ -38,16 +41,27 @@ export function ScriptEditorView({ profileId, keyId }: ScriptEditorViewProps) {
       <div className="flex flex-1 items-center justify-center bg-bg">
         <EmptyState
           icon={Code}
-          title="This key uses steps"
+          title="This action uses steps"
           description="Convert it to a script from the inspector's ⋯ menu or the flow editor."
-          action={<Button onClick={() => editor.openFlow(profileId, keyId)}>Open the flow editor</Button>}
+          action={<Button onClick={() => editor.openTargetFlow(target)}>Open the flow editor</Button>}
         />
       </div>
     );
   }
 
-  const source = macro?.source ?? STARTER;
-  const setSource = (s: string) => editor.updateBinding(profileId, keyId, (b) => void (b.macro = { type: "script", source: s }), { coalesce: `script:${profileId}:${keyId}` });
+  const keyId = target.kind === "key" ? target.keyId : null;
+  const source = macro?.source ?? (target.kind === "key" ? KEY_STARTER : HOOK_STARTER(target.hook));
+  const setSource = (s: string) => {
+    if (target.kind === "key") {
+      editor.updateBinding(target.profileId, target.keyId, (b) => void (b.macro = { type: "script", source: s }), {
+        coalesce: `script:${target.profileId}:${target.keyId}`,
+      });
+    } else {
+      editor.setProfileHook(target.profileId, target.hook, { type: "script", source: s }, {
+        coalesce: `script:${target.profileId}:${target.hook}`,
+      });
+    }
+  };
 
   return (
     <div className="flex min-h-0 flex-1">

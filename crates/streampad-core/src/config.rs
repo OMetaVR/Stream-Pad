@@ -219,6 +219,10 @@ impl Default for OverlaySettings {
     }
 }
 
+fn is_false(v: &bool) -> bool {
+    !*v
+}
+
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
 #[serde(rename_all = "camelCase", default)]
 pub struct Profile {
@@ -226,6 +230,15 @@ pub struct Profile {
     pub name: String,
     pub color: Option<String>,
     pub icon: Option<String>,
+    /// Suppress StreamPad's built-in on-screen pad while this profile is active (e.g. for external companion UIs).
+    #[serde(default, skip_serializing_if = "is_false")]
+    pub hide_overlay: bool,
+    /// Macro run when entering this profile while macro mode is on (or turning macro mode on).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub on_enter: Option<Macro>,
+    /// Macro run when leaving this profile while macro mode is on (or turning macro mode off).
+    #[serde(default, skip_serializing_if = "Option::is_none")]
+    pub on_leave: Option<Macro>,
     pub keys: BTreeMap<KeyId, Binding>,
 }
 
@@ -237,7 +250,16 @@ impl Default for Profile {
 
 impl Profile {
     pub fn new(name: &str) -> Self {
-        Profile { id: new_id("p"), name: name.into(), color: None, icon: None, keys: BTreeMap::new() }
+        Profile {
+            id: new_id("p"),
+            name: name.into(),
+            color: None,
+            icon: None,
+            hide_overlay: false,
+            on_enter: None,
+            on_leave: None,
+            keys: BTreeMap::new(),
+        }
     }
 }
 
@@ -452,9 +474,12 @@ mod tests {
     #[test]
     fn tolerant_parse() {
         let c: Config = serde_json::from_str(
-            r#"{"profiles":[{"name":"A","keys":{"KP4":{"label":"x","macro":{"type":"script","source":"press('a')"}}}}],"unknown":1}"#,
+            r#"{"profiles":[{"name":"A","hideOverlay":true,"onEnter":{"type":"script","source":"log('in')"},"onLeave":{"type":"script","source":"log('out')"},"keys":{"KP4":{"label":"x","macro":{"type":"script","source":"press('a')"}}}}],"unknown":1}"#,
         )
         .unwrap();
+        assert!(c.profiles[0].hide_overlay);
+        assert!(matches!(c.profiles[0].on_enter, Some(Macro::Script { .. })));
+        assert!(matches!(c.profiles[0].on_leave, Some(Macro::Script { .. })));
         assert_eq!(c.profiles[0].keys[&KeyId::KP4].label, "x");
         assert_eq!(c.settings.overlay.peek_ms, 1600);
         assert!(matches!(c.profiles[0].keys[&KeyId::KP4].r#macro, Some(Macro::Script { .. })));

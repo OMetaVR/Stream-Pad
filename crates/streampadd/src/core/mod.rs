@@ -16,7 +16,7 @@ mod tests;
 use crate::backend::{InputBackend, InputOverrides, MacroRunner, engine_config};
 use crate::persist::PersistedState;
 use overlay::OverlayModel;
-use runs::{BindingRef, RunRegistry};
+use runs::{BindingRef, ProfileHook, RunRegistry};
 use serde::Serialize;
 use serde_json::Value;
 use std::collections::{BTreeMap, HashMap, HashSet};
@@ -128,6 +128,7 @@ pub struct Core {
     held: HashMap<KeyId, Held>,
     runs: RunRegistry,
     compiled: HashMap<BindingRef, Result<Arc<CompiledMacro>, CompileError>>,
+    compiled_hooks: HashMap<(String, ProfileHook), Result<Arc<CompiledMacro>, CompileError>>,
     vars: BTreeMap<String, Value>,
     devices: Vec<DeviceInfo>,
     reported_outputs: Option<Vec<OutputInfo>>,
@@ -162,6 +163,7 @@ impl Core {
             held: HashMap::new(),
             runs: RunRegistry::default(),
             compiled: HashMap::new(),
+            compiled_hooks: HashMap::new(),
             vars: initial.vars,
             devices,
             reported_outputs: None,
@@ -176,6 +178,9 @@ impl Core {
         };
         core.capture = core.wanted_capture();
         core.deps.input.set_capture(core.capture.clone());
+        if core.macro_mode {
+            core.trigger_profile_hook(core.profile_index, ProfileHook::Enter);
+        }
         core.settle(now);
         core
     }
@@ -269,6 +274,7 @@ impl Core {
         self.profile_index =
             self.cfg.profile_index(&current_id).unwrap_or_else(|| self.profile_index.min(self.cfg.profiles.len() - 1));
         self.compiled.clear();
+        self.compiled_hooks.clear();
         self.render_cache = None;
         if old.library != self.cfg.library {
             self.deps.runner.set_library(self.cfg.library.clone());
@@ -279,6 +285,9 @@ impl Core {
         }
         if s_old.overlay.monitor != s_new.overlay.monitor && self.shown {
             self.resolve_output(now);
+        }
+        if self.macro_mode && self.current_profile().id != current_id {
+            self.trigger_profile_hook(self.profile_index, ProfileHook::Enter);
         }
         self.settle(now);
     }
@@ -391,6 +400,21 @@ impl Core {
         Some(result)
     }
 
+    fn compiled_hook_for(&mut self, profile_id: &str, hook: ProfileHook) -> Option<Result<Arc<CompiledMacro>, CompileError>> {
+        let key = (profile_id.to_string(), hook);
+        if let Some(c) = self.compiled_hooks.get(&key) {
+            return Some(c.clone());
+        }
+        let profile = self.cfg.profiles.iter().find(|p| p.id == profile_id)?;
+        let m = match hook {
+            ProfileHook::Enter => profile.on_enter.as_ref()?,
+            ProfileHook::Leave => profile.on_leave.as_ref()?,
+        };
+        let result = compile(m, &CompileOptions { trace: true }).map(Arc::new);
+        self.compiled_hooks.insert(key, result.clone());
+        Some(result)
+    }
+
     fn emit(&mut self, name: &'static str, data: impl Serialize) {
         self.effects.push(Effect::Event(Event::new(name, data)));
     }
@@ -417,10 +441,12 @@ impl Core {
     fn mode_changed(&mut self, on: bool, now: Instant) {
         self.macro_mode = on;
         if on {
+            self.trigger_profile_hook(self.profile_index, ProfileHook::Enter);
             if self.cfg.settings.overlay.peek_on_mode_change {
                 self.overlay.peek(now + self.peek_duration());
             }
         } else {
+            self.trigger_profile_hook(self.profile_index, ProfileHook::Leave);
             self.overlay.stop_peek();
             self.cancel_pending_globals();
         }
@@ -434,11 +460,18 @@ impl Core {
         if index == self.profile_index || index >= self.cfg.profiles.len() {
             return;
         }
+        let previous = self.profile_index;
+        if self.macro_mode {
+            self.trigger_profile_hook(previous, ProfileHook::Leave);
+        }
         self.profile_index = index;
         self.render_cache = None;
         self.pre_state.push(Event::new(events::PROFILE, streampad_core::ipc::ProfileEvent { index, direction }));
-        if self.macro_mode && self.cfg.settings.overlay.peek_on_profile_change {
-            self.overlay.peek(now + self.peek_duration());
+        if self.macro_mode {
+            self.trigger_profile_hook(index, ProfileHook::Enter);
+            if self.cfg.settings.overlay.peek_on_profile_change {
+                self.overlay.peek(now + self.peek_duration());
+            }
         }
     }
 

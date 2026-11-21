@@ -85,6 +85,8 @@ pub struct ProfileSummary {
     pub color: Option<String>,
     /// Resolved absolute path (or null).
     pub icon: Option<String>,
+    #[serde(default)]
+    pub hide_overlay: bool,
 }
 
 #[derive(Debug, Clone, PartialEq, Serialize, Deserialize)]
@@ -94,6 +96,8 @@ pub struct RenderProfile {
     pub name: String,
     pub color: Option<String>,
     pub icon: Option<String>,
+    #[serde(default)]
+    pub hide_overlay: bool,
     /// All 17 keys are present.
     pub keys: BTreeMap<KeyId, RenderKey>,
 }

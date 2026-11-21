@@ -90,6 +90,7 @@ pub fn render_profile(cfg: &Config, index: usize, paths: &Paths) -> RenderProfil
         name: profile.name.clone(),
         color: profile.color.clone(),
         icon: icon_path(paths, profile.icon.as_deref()).0,
+        hide_overlay: profile.hide_overlay,
         keys,
     }
 }
@@ -102,6 +103,7 @@ pub fn profile_summaries(cfg: &Config, paths: &Paths) -> Vec<ProfileSummary> {
             name: p.name.clone(),
             color: p.color.clone(),
             icon: icon_path(paths, p.icon.as_deref()).0,
+            hide_overlay: p.hide_overlay,
         })
         .collect()
 }

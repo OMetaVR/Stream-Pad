@@ -2,7 +2,7 @@
 //! (§2.4) and learn mode (§2.5).
 
 use super::render::active_global;
-use super::runs::{Admission, BindingRef};
+use super::runs::{Admission, BindingRef, ProfileHook, RunOrigin};
 use super::{Core, Held};
 use std::sync::Arc;
 use std::time::{Duration, Instant};
@@ -158,7 +158,7 @@ impl Core {
                 let profile = self.profile_by_id(&origin.profile_id)?;
                 let (profile_id, profile_name) = (profile.id.clone(), profile.name.clone());
                 let inv = Invocation { run_id: 0, key: Some(origin.key), repeat, profile_id, profile_name };
-                Some(self.start_run(code, inv, Some(origin.clone()), title))
+                Some(self.start_run(code, inv, Some(RunOrigin::Binding(origin.clone())), title))
             }
             Err(e) => {
                 let message = match &e.node_id {
@@ -171,12 +171,55 @@ impl Core {
         }
     }
 
+    /// Run a profile's `onEnter` or `onLeave` lifecycle macro, cancelling any earlier in-flight hook
+    /// for the same profile so rapid switching never leaves enter/leave racing.
+    pub(super) fn trigger_profile_hook(&mut self, profile_index: usize, hook: ProfileHook) {
+        let Some(profile) = self.cfg.profiles.get(profile_index) else { return };
+        let has_hook = match hook {
+            ProfileHook::Enter => profile.on_enter.is_some(),
+            ProfileHook::Leave => profile.on_leave.is_some(),
+        };
+        let (profile_id, profile_name) = (profile.id.clone(), profile.name.clone());
+        for id in self.runs.active_profile_hooks(&profile_id) {
+            self.runs.cancel(id);
+        }
+        if !has_hook {
+            return;
+        }
+        if !self.runs.has_capacity() {
+            log::warn!("too many macros running; ignoring {} ({})", profile_name, hook.label());
+            return;
+        }
+        let title = format!("{profile_name} ({})", hook.label());
+        match self.compiled_hook_for(&profile_id, hook) {
+            Some(Ok(code)) => {
+                let inv = Invocation {
+                    run_id: 0,
+                    key: None,
+                    repeat: false,
+                    profile_id: profile_id.clone(),
+                    profile_name,
+                };
+                let run_id = self.start_run(code, inv, Some(RunOrigin::ProfileHook { profile_id, hook }), title);
+                self.runs.release(run_id);
+            }
+            Some(Err(e)) => {
+                let message = match &e.node_id {
+                    Some(node) => format!("{e} (node {node})"),
+                    None => e.to_string(),
+                };
+                self.report_failed_start(None, &title, message);
+            }
+            None => {}
+        }
+    }
+
     /// Spawn a run (`inv.run_id` is assigned here) and announce it.
     pub(super) fn start_run(
         &mut self,
         code: Arc<CompiledMacro>,
         mut inv: Invocation,
-        origin: Option<BindingRef>,
+        origin: Option<RunOrigin>,
         title: String,
     ) -> u64 {
         let run_id = self.runs.allocate_id();

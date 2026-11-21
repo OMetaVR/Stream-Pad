@@ -15,7 +15,7 @@ interface Crumb {
 
 function useCrumbs(view: View): Crumb[] {
   const profileName = useEditor((s) =>
-    (view.kind === "flow" || view.kind === "script") && s.config ? (findProfile(s.config, view.profileId)?.name ?? "") : "",
+    (view.kind === "flow" || view.kind === "script") && s.config ? (findProfile(s.config, view.target.profileId)?.name ?? "") : "",
   );
   switch (view.kind) {
     case "main":
@@ -23,12 +23,19 @@ function useCrumbs(view: View): Crumb[] {
     case "settings":
       return [{ label: "Settings" }];
     case "flow":
-    case "script":
+    case "script": {
+      const targetLabel =
+        view.target.kind === "key"
+          ? KEY_INFO[view.target.keyId].name
+          : view.target.hook === "onEnter"
+            ? "On enter"
+            : "On leave";
       return [
         { label: profileName || "Untitled", onClick: editor.showMain },
-        { label: KEY_INFO[view.keyId].name, onClick: editor.showMain },
+        { label: targetLabel, onClick: editor.showMain },
         { label: view.kind === "flow" ? "Flow" : "Script" },
       ];
+    }
   }
 }
 

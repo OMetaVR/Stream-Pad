@@ -20,11 +20,11 @@ import fuzzysort from "fuzzysort";
 import { Code, Copy, LayoutPanelLeft, Search, Trash2, Wand2, Workflow } from "lucide-react";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { getBackend } from "@/lib/backend";
-import type { GraphNode, KeyId } from "@/lib/types";
+import type { GraphNode } from "@/lib/types";
 import { useHotkey } from "@/lib/hotkeys";
 import { useDaemonEvent } from "@/state/daemon";
-import { useBinding } from "@/state/selectors";
-import { editor } from "@/state/store";
+import { useMacroForTarget } from "@/state/selectors";
+import { editor, type MacroTarget } from "@/state/store";
 import { Button, confirm, EmptyState, IconButton, Input, RefIcon, ScrollArea, Tabs, TabsList, TabsTrigger, toast } from "@/ui";
 import { ActionPicker } from "./ActionPicker";
 import { ACTION_DEFS, CATEGORIES, categoryColor, nodeDef, validateNode, type NodeContext } from "./catalog";
@@ -37,8 +37,7 @@ import { emptyGraph, isTrigger, newEdge, newNode, type Graph } from "./graph";
 import { TestRow } from "./MacroSection";
 
 export interface FlowEditorViewProps {
-  profileId: string;
-  keyId: KeyId;
+  target: MacroTarget;
 }
 
 const DRAG_MIME = "application/x-streampad-node";
@@ -64,11 +63,11 @@ function reachable(g: Graph): Set<string> {
   return seen;
 }
 
-function FlowEditor({ profileId, keyId }: FlowEditorViewProps) {
-  const binding = useBinding(profileId, keyId);
+function FlowEditor({ target }: FlowEditorViewProps) {
+  const macro = useMacroForTarget(target);
+  const keyId = target.kind === "key" ? target.keyId : null;
   const ctx = useNodeContext();
   const rf = useReactFlow();
-  const macro = binding?.macro;
   const graph: Graph | null = macro?.type === "graph" ? macro : null;
   const [tab, setTab] = useState<"flow" | "code">("flow");
   const [selected, setSelected] = useState<string | null>(null);
@@ -79,16 +78,21 @@ function FlowEditor({ profileId, keyId }: FlowEditorViewProps) {
   const [rfNodes, setRfNodes] = useState<FlowNodeType[]>([]);
   const clipboard = useRef<GraphNode[] | null>(null);
 
-  // A key without a graph macro gets an empty one (scripts are edited in the script view).
-  useEffect(() => {
-    if (!macro) editor.updateBinding(profileId, keyId, (b) => void (b.macro = emptyGraph()), { coalesce: false });
-  }, [macro, profileId, keyId]);
-
   const commit = useCallback(
-    (next: Graph, coalesce: string | false = false) =>
-      editor.updateBinding(profileId, keyId, (b) => void (b.macro = next), { coalesce }),
-    [profileId, keyId],
+    (next: Graph, coalesce: string | false = false) => {
+      if (target.kind === "key") {
+        editor.updateBinding(target.profileId, target.keyId, (b) => void (b.macro = next), { coalesce });
+      } else {
+        editor.setProfileHook(target.profileId, target.hook, next, { coalesce });
+      }
+    },
+    [target],
   );
+
+  // A target without a graph macro gets an empty one (scripts are edited in the script view).
+  useEffect(() => {
+    if (!macro) commit(emptyGraph(), false);
+  }, [macro, commit]);
 
   // Live validation + generated code (debounced).
   useEffect(() => {
@@ -230,14 +234,18 @@ function FlowEditor({ profileId, keyId }: FlowEditorViewProps) {
     if (!res.ok) return toast.error("Fix the flow first", { description: res.error });
     const ok = await confirm({ title: "Convert to a script?", description: "The flow becomes JavaScript you can edit freely. It can't be turned back into a flow.", confirmLabel: "Convert" });
     if (!ok) return;
-    editor.updateBinding(profileId, keyId, (b) => void (b.macro = { type: "script", source: res.code }), { coalesce: false });
-    editor.openScript(profileId, keyId);
+    if (target.kind === "key") {
+      editor.updateBinding(target.profileId, target.keyId, (b) => void (b.macro = { type: "script", source: res.code }), { coalesce: false });
+    } else {
+      editor.setProfileHook(target.profileId, target.hook, { type: "script", source: res.code }, { coalesce: false });
+    }
+    editor.openTargetScript(target);
   };
 
   if (macro?.type === "script") {
     return (
       <div className="flex flex-1 items-center justify-center bg-bg">
-        <EmptyState icon={Code} title="This key runs a script" description="Scripts can't be shown as a flow." action={<Button onClick={() => editor.openScript(profileId, keyId)}>Open the script</Button>} />
+        <EmptyState icon={Code} title="This action runs a script" description="Scripts can't be shown as a flow." action={<Button onClick={() => editor.openTargetScript(target)}>Open the script</Button>} />
       </div>
     );
   }

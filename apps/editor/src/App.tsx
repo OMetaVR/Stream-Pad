@@ -76,10 +76,14 @@ function CurrentView() {
       );
     case "settings":
       return <SettingsView section={view.section} />;
-    case "flow":
-      return <FlowEditorView key={`${view.profileId}:${view.keyId}`} profileId={view.profileId} keyId={view.keyId} />;
-    case "script":
-      return <ScriptEditorView key={`${view.profileId}:${view.keyId}`} profileId={view.profileId} keyId={view.keyId} />;
+    case "flow": {
+      const k = view.target.kind === "key" ? `${view.target.profileId}:${view.target.keyId}` : `${view.target.profileId}:${view.target.hook}`;
+      return <FlowEditorView key={k} target={view.target} />;
+    }
+    case "script": {
+      const k = view.target.kind === "key" ? `${view.target.profileId}:${view.target.keyId}` : `${view.target.profileId}:${view.target.hook}`;
+      return <ScriptEditorView key={k} target={view.target} />;
+    }
   }
 }
 

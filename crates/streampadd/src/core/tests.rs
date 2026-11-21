@@ -714,3 +714,60 @@ fn snapshot_renders_current_profile_and_globals() {
     h.tap(KeyId::KPDot, 20);
     assert!(!h.core.macro_mode, "a toggleMacroMode global leaves macro mode");
 }
+
+// ---- profile lifecycle hooks & hideOverlay ---------------------------------------------------------------
+
+#[test]
+fn profile_hooks_follow_macro_mode_and_profile_switches() {
+    let mut cfg = test_config();
+    cfg.profiles[0].on_enter = script("log('enter-A')");
+    cfg.profiles[0].on_leave = script("log('leave-A')");
+    cfg.profiles[1].on_enter = script("log('enter-B')");
+    cfg.profiles[1].on_leave = script("log('leave-B')");
+    cfg.profiles[1].hide_overlay = true;
+
+    let mut h = Harness::new(cfg);
+    assert!(h.spawned().is_empty(), "macro mode off at startup: no hooks run");
+
+    // Switching profiles while macro mode is off must not fire hooks.
+    h.request("setProfile", json!({ "index": 1 }), 10).unwrap();
+    assert!(h.spawned().is_empty(), "no hooks while macro mode is off");
+
+    // Turning macro mode on fires the active profile's onEnter (B).
+    h.macro_mode_on(20);
+    let scripts = |h: &Harness| {
+        h.runner.spawned.lock().unwrap().iter().map(|(_, code)| code.clone()).collect::<Vec<_>>()
+    };
+    assert_eq!(scripts(&h), ["log('enter-B')"]);
+    let b_enter_id = h.spawned()[0];
+    assert_eq!(h.run_log(b_enter_id), (false, 1), "profile hooks receive immediate release");
+    let snap = h.core.snapshot();
+    assert!(snap.profile.hide_overlay && snap.profiles[1].hide_overlay);
+    assert!(snap.overlay.visible, "overlay.visible stays true for external companions");
+
+    // Switching B -> A while in macro mode cancels in-flight enter-B, fires leave-B then enter-A.
+    h.request("setProfile", json!({ "index": 0 }), 30).unwrap();
+    assert_eq!(scripts(&h), ["log('enter-B')", "log('leave-B')", "log('enter-A')"]);
+    assert!(h.run_log(b_enter_id).0, "in-flight enter-B cancelled when leaving B");
+
+    // Editing config for the current profile must not re-fire onEnter.
+    let edited = h.core.cfg.clone();
+    h.core.apply_config(edited, h.at(40));
+    assert_eq!(scripts(&h).len(), 3, "config reload on same profile does not re-fire onEnter");
+
+    // Leaving macro mode fires active profile's onLeave (A).
+    h.core.engine_event(EngineEvent::ModeChanged { macro_mode: false, source: ModeSource::ToggleKey }, h.at(50));
+    assert_eq!(scripts(&h), ["log('enter-B')", "log('leave-B')", "log('enter-A')", "log('leave-A')"]);
+}
+
+#[test]
+fn profile_on_enter_runs_at_startup_when_macro_mode_starts_on() {
+    let mut cfg = test_config();
+    cfg.settings.start_in_macro_mode = true;
+    cfg.profiles[0].on_enter = script("log('boot-A')");
+    let h = Harness::new(cfg);
+    let spawned = h.runner.spawned.lock().unwrap();
+    assert_eq!(spawned.len(), 1);
+    assert_eq!(spawned[0].1, "log('boot-A')");
+    assert_eq!(spawned[0].0.key, None);
+}

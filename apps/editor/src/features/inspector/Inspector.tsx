@@ -1,25 +1,81 @@
 // Right pane: everything about the selected key — how it looks (label, icon, cover, colour) and what it
 // does (the macro feature's <MacroSection>).
 
-import { ChevronsUpDown, Lock, MousePointerClick } from "lucide-react";
+import { ChevronsUpDown, Layers, Lock, MousePointerClick } from "lucide-react";
 import { useRef } from "react";
-import { MacroSection } from "@/features/macro";
+import { MacroSection, ProfileHookSection } from "@/features/macro";
 import { emptyBinding, GLOBAL_ACTION_INFO } from "@/lib/model";
-import { KEY_INFO } from "@/lib/types";
-import { useBinding, useGlobal } from "@/state/selectors";
+import { KEY_INFO, type Profile } from "@/lib/types";
+import { useBinding, useGlobal, useSelectedProfile } from "@/state/selectors";
 import { editor, useEditor, useRequest } from "@/state/store";
-import { Button, ColorPicker, EmptyState, Field, Input, Kbd, RefIcon, ScrollArea } from "@/ui";
+import { Button, ColorPicker, EmptyState, Field, Input, Kbd, RefIcon, ScrollArea, Switch } from "@/ui";
 import { CoverPicker } from "./CoverPicker";
 import { IconPicker } from "./IconPicker";
 
+function ProfileInspector({ profile }: { profile: Profile }) {
+  return (
+    <aside className="flex h-full min-h-0 flex-col border-l border-line bg-panel">
+      <div className="flex h-14 shrink-0 items-center gap-3 border-b border-line-subtle px-4">
+        <span className="flex size-9 shrink-0 items-center justify-center rounded-[9px] bg-control text-fg">
+          {profile.icon ? <RefIcon iconRef={profile.icon} size={18} /> : <Layers size={18} />}
+        </span>
+        <div className="min-w-0">
+          <h2 className="truncate text-md font-semibold">{profile.name || "Untitled"}</h2>
+          <p className="text-xs text-muted">Profile · click a key on the pad to edit it</p>
+        </div>
+      </div>
+      <ScrollArea className="min-h-0 flex-1">
+        <div className="flex flex-col gap-6 px-4 pb-8 pt-4">
+          <section className="flex flex-col gap-3" aria-label="Overlay">
+            <h3 className="text-sm font-medium text-muted">Overlay</h3>
+            <Field
+              label="Hide built-in overlay"
+              hint="Suppress StreamPad's on-screen pad on this profile (e.g. when a companion widget draws its own UI)."
+              inline
+            >
+              <Switch
+                checked={!!profile.hideOverlay}
+                onCheckedChange={(v) => editor.updateProfile(profile.id, (p) => void (p.hideOverlay = v), { coalesce: false })}
+                aria-label="Hide built-in overlay"
+              />
+            </Field>
+          </section>
+
+          <div className="border-t border-line-subtle pt-5">
+            <ProfileHookSection
+              profileId={profile.id}
+              hook="onEnter"
+              title="On enter"
+              hint="Runs when switching into this profile in macro mode, or turning macro mode on."
+              macro={profile.onEnter}
+            />
+          </div>
+
+          <div className="border-t border-line-subtle pt-5">
+            <ProfileHookSection
+              profileId={profile.id}
+              hook="onLeave"
+              title="On leave"
+              hint="Runs when switching away from this profile, or turning macro mode off."
+              macro={profile.onLeave}
+            />
+          </div>
+        </div>
+      </ScrollArea>
+    </aside>
+  );
+}
+
 export function Inspector() {
   const { profileId, keyId } = useEditor((s) => s.selection);
+  const profile = useSelectedProfile();
   const binding = useBinding(profileId, keyId);
   const global = useGlobal(keyId);
   const labelRef = useRef<HTMLInputElement>(null);
   useRequest("focusLabel", () => labelRef.current?.focus());
 
   if (!profileId || !keyId) {
+    if (profile) return <ProfileInspector profile={profile} />;
     return (
       <aside className="flex h-full items-center border-l border-line bg-panel">
         <EmptyState icon={MousePointerClick} title="Select a key" description="Click a key on the pad, or use the arrow keys, to choose what it does." />

@@ -12,7 +12,7 @@ import { useEffect, useRef } from "react";
 import { create } from "zustand";
 import { getBackend } from "@/lib/backend";
 import { deepClone, emptyBinding, findProfile, isBindingEmpty, isGlobalKey, newId, newProfile, uniqueName } from "@/lib/model";
-import type { Binding, Config, KeyId, Profile, Settings } from "@/lib/types";
+import type { Binding, Config, KeyId, Macro, Profile, ProfileHook, Settings } from "@/lib/types";
 import { toast } from "@/ui/Toaster";
 
 // ---------------------------------------------------------------------------------------------------------
@@ -20,11 +20,15 @@ import { toast } from "@/ui/Toaster";
 
 export type SettingsSection = "general" | "globals" | "overlay" | "devices" | "scripting" | "about";
 
+export type MacroTarget =
+  | { kind: "key"; profileId: string; keyId: KeyId }
+  | { kind: "hook"; profileId: string; hook: ProfileHook };
+
 export type View =
   | { kind: "main" }
   | { kind: "settings"; section?: SettingsSection }
-  | { kind: "flow"; profileId: string; keyId: KeyId }
-  | { kind: "script"; profileId: string; keyId: KeyId };
+  | { kind: "flow"; target: MacroTarget }
+  | { kind: "script"; target: MacroTarget };
 
 export type LoadState = { kind: "loading" } | { kind: "ready" } | { kind: "error"; message: string };
 
@@ -296,6 +300,18 @@ function updateProfile(id: string, fn: (draft: Draft<Profile>) => void, history?
   );
 }
 
+function setProfileHook(profileId: string, hook: ProfileHook, macro: Macro | null, history?: HistoryOptions): boolean {
+  return edit(
+    (c) => {
+      const p = c.profiles.find((x) => x.id === profileId);
+      if (!p) return;
+      if (macro) p[hook] = macro;
+      else delete p[hook];
+    },
+    opts(history, hook === "onEnter" ? "Edit on-enter action" : "Edit on-leave action", false),
+  );
+}
+
 function reorderProfiles(from: number, to: number): boolean {
   return edit(
     (c) => {
@@ -439,6 +455,7 @@ export const editor = {
   restoreProfile,
   renameProfile,
   updateProfile,
+  setProfileHook,
   reorderProfiles,
 
   setBinding,
@@ -461,8 +478,12 @@ export const editor = {
   setView: (view: View) => set({ view }),
   showMain: () => set({ view: { kind: "main" } }),
   openSettings: (section?: SettingsSection) => set({ view: { kind: "settings", section } }),
-  openFlow: (profileId: string, keyId: KeyId) => set({ view: { kind: "flow", profileId, keyId } }),
-  openScript: (profileId: string, keyId: KeyId) => set({ view: { kind: "script", profileId, keyId } }),
+  openFlow: (profileId: string, keyId: KeyId) => set({ view: { kind: "flow", target: { kind: "key", profileId, keyId } } }),
+  openScript: (profileId: string, keyId: KeyId) => set({ view: { kind: "script", target: { kind: "key", profileId, keyId } } }),
+  openHookFlow: (profileId: string, hook: ProfileHook) => set({ view: { kind: "flow", target: { kind: "hook", profileId, hook } } }),
+  openHookScript: (profileId: string, hook: ProfileHook) => set({ view: { kind: "script", target: { kind: "hook", profileId, hook } } }),
+  openTargetFlow: (target: MacroTarget) => set({ view: { kind: "flow", target } }),
+  openTargetScript: (target: MacroTarget) => set({ view: { kind: "script", target } }),
 
   request,
 };

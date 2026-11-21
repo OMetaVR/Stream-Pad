@@ -182,6 +182,9 @@ interface Profile {
   name: string;          // "Audio"
   color: string | null;  // accent override "#ff7a59"
   icon: string | null;   // IconRef (see below), shown in overlay header + editor sidebar
+  hideOverlay?: boolean; // false; suppress built-in overlay (IPC state still updates for external UIs)
+  onEnter?: Macro | null; // runs when entering macro mode on this profile, or switching to it while macro mode is active
+  onLeave?: Macro | null; // runs when leaving macro mode from this profile, or switching away while macro mode is active
   keys: Partial<Record<KeyId, Binding>>;
 }
 
@@ -365,7 +368,7 @@ interface DaemonState {
   integrations: { kwin: boolean; layerShell: boolean | null };
   configError: string | null;
 }
-interface RenderProfile { id: string; name: string; color: string | null; icon: string | null; keys: Record<KeyId, RenderKey> } // all 17 keys present
+interface RenderProfile { id: string; name: string; color: string | null; icon: string | null; hideOverlay: boolean; keys: Record<KeyId, RenderKey> } // all 17 keys present
 interface RenderKey {
   label: string;
   icon: string | null;      // absolute file path (lucide resolved) or null
