@@ -1,6 +1,6 @@
 # Maintainer: OMetaVR <https://github.com/OMetaVR>
 pkgname=streampad
-pkgver=2.1.0
+pkgver=2.2.0
 pkgrel=1
 pkgdesc="Turn your numpad into a profile-based macropad with an on-screen pad (KDE Plasma / Wayland)"
 arch=('x86_64')
